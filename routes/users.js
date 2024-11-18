@@ -97,7 +97,9 @@ router
             // } else {
             //     return res.redirect('/moodQuestionnaire');
             // }
-            return res.redirect('/moodQuestionnaire');
+             //Set the session for the successful login:
+          req.session.user = { id: user._id, email: user.email };
+          return res.redirect('/moodpage');
         } catch (e) {
             res.status(500).json({ error: e });
         }
@@ -160,7 +162,8 @@ router
     //     }
     // });
 
-router 
+//Added in a new Route for the Mood Questionaire Page under moods.js file
+/*router 
     .route('/moodQuestionnaire')
     .get(async (req, res) => {
         try {
@@ -171,7 +174,7 @@ router
         } catch(e){
             res.status(500).json({ error: e.message });
         }
-    })
+    })*/
     // .post(async (req, res) => {
     //     const { email, password } = req.body;
     //     try {

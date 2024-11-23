@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    font-size: 14pt;
+}
+body {
+    background: #49a2ce76;
+    font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+main {
+    max-width: 75%;
+    margin: auto;
+}
+form {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    text-align: center; 
+    
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+h1 {
+    width: 100%;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 70px;
+    text-align: center;
+}
+
+form{
+    text-align: right;
+}
+
+.moods {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 50px 70px;
+    max-width: 800px;
+    margin: auto;
+}
+
+.mood-list {
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+}
+
+.mood-label {
+    display: block;
+    padding: 15px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+
+.mood-variants {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 180%;       
+    left: 100%;    
+    transform: translateY(-50%);  
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    text-align: left;
+    padding: 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 2; 
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+
+.mood-list:hover .mood-variants {
+    visibility: visible;
+    opacity: 1;
+}
+
+.mood-list:hover .mood-label {
+    border-color: #e30808;
+    background-color: #25d14d;
+    transform: scale(1.05);
+}
+
+
+.mood-variants p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+
+.mood-list input:checked + .mood-label {
+    border-color: #007bff;
+    background-color: #abb5bc;
+}
+
+.submit {
+    margin-top: 40px;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #007bff;
+    border:  3px solid #007bff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submit:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+.alert {
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.alert-danger {
+    background-color: #e42030ae;
+    color: #341115;
+    font-size: 1rem;
+    text-align: center;
+    margin-top : 40px;
+    font-weight: bold;
+}
+.hidden {
+    display: none;
+}

@@ -20,27 +20,36 @@ router.route('/moodpage')
         }
     });
 router.route('/activitypage')
-    .post(async(req,res) => {
-    const usermood = req.body.usermood;
-    try
-    { //Should be a render error call 
-        if(!usermood){
-            return res
-                .status(400)
-                .json({status : 400, error : "No mood is selected"});
-            }
-        let moodSelected = await moodsData.getMoodByName(usermood);
-        if(!moodSelected) {
-            return res.status(404).json({status : 404, error : "Mood not found"});
-        }
-        let associated_Interests = moodSelected.interest;
+    .post(async (req, res) => {
+        const usermood = req.body.usermood; 
 
-        //Should be rendered for the interest page
-        return res.json(associated_Interests);
-    }
-    catch(e)
-    {
-        return res.status(500).json({ status: 500, error: e });
-    }
-    });
+        try {
+            if (!usermood) {
+                return res.status(400).render('errorPage', { 
+                    status: 400, 
+                    error: "No mood is selected" 
+                }); 
+            }
+
+            const moodSelected = await moodsData.getMoodByName(usermood);
+            if (!moodSelected) {
+                return res.status(404).render('errorPage', { 
+                    status: 404, 
+                    error: "Mood not found" 
+                });
+            }
+
+            const associated_Interests = moodSelected.interest;
+            return res.status(200).render('users/interests', {
+                selectedMood: moodSelected.moodName,
+                interests: associated_Interests,
+                layout: 'mainInterests'
+            });
+        } catch (e) {
+            return res.status(500).render('errorPage', { 
+                status: 500, 
+                error: "Internal Server Error. Please try again later." 
+            });
+        }
+    });     
 export default router; 

@@ -13,9 +13,22 @@
 
 <div id="activities-container" class="hidden">
   <h3>Suggested Activities:</h3>
-  <ul id="activities-list"></ul>
+  <div class="form-floating col-3">
+    <select name="activity" class="form-select" id="activityselect" required>
+      <option value="" disabled selected>Choose an activity</option>
+    </select>
+  </div>
 </div>
-<button type="button" id="nextPageBtn" class="btn btn-secondary mt-3 hidden">Next</button>
+
+<form id="activityForm" action="/interests/placepage" method="POST">
+    <input type="hidden" name="activity" id="selectedActivityInput" value="">
+    <button type="submit" id="nextPageBtn" class="btn btn-secondary mt-3">Next</button>
+</form>
+
+
+<div class="moodForm hidden" id="error-container">
+  <div class="alert alert-danger text-goes-here"></div>
+</div>
 
 <script 
   src="https://code.jquery.com/jquery-2.2.4.min.js" 

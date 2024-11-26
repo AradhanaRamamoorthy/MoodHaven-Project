@@ -17,13 +17,14 @@ router.get('/:interest/activities', async (req, res) => {
     }
 });
 
-router.get('/placepage', async (req, res) => {
-    try {
-        res.json(); 
-    } catch (error) {
-        console.error('Error rendering next page:', error);
-        res.status(400).json({ error: error.message });
+router.post('/placepage', async (req, res) => {
+    const activity = req.body.activity;
+    console.log(activity);
+    if (!activity) {
+        return res.status(400).json({ error: "Invalid or missing activity." });
     }
+    res.render('users/placepage', { selectedActivity: activity });
 });
+
 
 export default router;

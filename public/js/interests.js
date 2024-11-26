@@ -1,41 +1,43 @@
 document.addEventListener("DOMContentLoaded", function() {
     const interestSelect = document.getElementById("interestselect");
     const activitiesContainer = document.getElementById("activities-container");
-    const activitiesList = document.getElementById("activities-list");
+    const activitySelect = document.getElementById("activityselect");
     const errorContainer = document.getElementById("error-container");
     const errorMessage = errorContainer.querySelector(".alert");
     const getActivitiesBtn = document.getElementById("getActivitiesBtn");
-    const nextPageBtn = document.getElementById("nextPageBtn");
-
+    const activityForm = document.getElementById("activityForm");
+    const selectedActivityInput = document.getElementById("selectedActivityInput");
 
     let selectedInterest = "";
+
     interestSelect.addEventListener("change", function() {
         selectedInterest = this.value;
     });
+
     getActivitiesBtn.addEventListener("click", function() {
         if (selectedInterest) {
-          fetchActivities(selectedInterest); 
+            fetchActivities(selectedInterest);
         } else {
-          showError("Please select an interest before submitting.");
+            showError("Please select an interest before submitting.");
         }
     });
 
     function fetchActivities(interest) {
         activitiesContainer.classList.add("hidden");
         errorContainer.classList.add("hidden");
-        fetch(`/interests/${interest}/activities`) 
+        activitySelect.innerHTML = `<option value="" disabled selected>Choose an activity</option>`;
+        fetch(`/interests/${interest}/activities`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Error: ${response.statusText}`);
                 }
-                return response.json(); 
+                return response.json();
             })
             .then(data => {
-
                 if (data && data.length > 0) {
-                    displayActivities(data); 
+                    populateActivities(data);
                 } else {
-                    showError("No activities found for this interest."); 
+                    showError("No activities found for this interest.");
                 }
             })
             .catch(error => {
@@ -43,20 +45,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 showError("An error occurred while fetching activities.");
             });
     }
-    function displayActivities(activities) {
-        activitiesList.innerHTML = ""; 
+
+    function populateActivities(activities) {
         activities.forEach(activity => {
-            const listItem = document.createElement("li");
-            listItem.textContent = activity;
-            activitiesList.appendChild(listItem);
+            const option = document.createElement("option");
+            option.value = activity;
+            option.textContent = activity;
+            activitySelect.appendChild(option);
         });
         activitiesContainer.classList.remove("hidden");
+        activityForm.classList.remove("hidden");
     }
+    activitySelect.addEventListener("change", function () {
+        const selectedActivity = this.value;
+        if (selectedActivity) {
+            selectedActivityInput.value = selectedActivity;  // Update hidden input field
+        }
+    });
+
     function showError(message) {
         errorMessage.textContent = message;
-        errorContainer.classList.remove("hidden"); 
+        errorContainer.classList.remove("hidden");
     }
-    nextPageBtn.addEventListener("click", function() {
-        window.location.href = "/interests/placepage";  // Redirect to the next page
-    });
 });

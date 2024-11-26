@@ -4,30 +4,23 @@ import { moods } from "../config/mongoCollections.js";
 import { getMoodById } from "./moods.js";
 import { allInterests } from "../config/mongoCollections.js";
 
-const createInterest = async(moodId, interest, activities) => {
+const createInterest = async(
+    moodId,
+    interest
+) => {
     moodId = helpers.checkId(moodId);
     interest = helpers.checkArray(interest);
     const mood = await getMoodById(moodId);
     if(!mood) throw 'Mood not found!';
     const moodCollection = await moods();
     const interest_added_to_moods = await moodCollection.findOneAndUpdate(
-        {_id: ObjectId.createFromHexString(moodId)},
-        {
-            $push: {
-                interest: {
-                    $each: interest.map(i => ({
-                        interestName: i,
-                        activities: activities[i] || [] // Add activities for each interest
-                    }))
-                }
-            }
-        },
-        { returnDocument: 'after' }
+        {_id : ObjectId.createFromHexString(moodId)},
+        {$push : {interest : { $each : interest}}},
+        {returnDocument : 'after'}
     );
-
-    if (!interest_added_to_moods) throw 'Could not add interest to the moods successfully!';
+    if(!interest_added_to_moods) throw 'Could not add interest to the moods successfully!';
     return interest_added_to_moods;
-};
+}
 
 const getAllInterests = async () => {
     const interestsCollection = await allInterests();  

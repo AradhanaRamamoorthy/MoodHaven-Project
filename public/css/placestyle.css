@@ -1,0 +1,59 @@
+.place-container {
+    border: 2px solid #ccc; 
+    border-radius: 10px; 
+    padding: 20px; 
+    margin: 20px 0; 
+    display: flex; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    background-color: #fff; 
+  }
+  
+
+  .place-container .place-icon {
+    flex: 0 0 100px; 
+    margin-right: 20px;
+  }
+  
+  .place-container .place-details {
+    flex-grow: 1;
+  }
+  
+
+  .place-name a {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .place-address a {
+    font-size: 1.1em;
+    color: #555;
+    text-decoration: none;
+  }
+  
+  .place-address a:hover {
+    text-decoration: underline;
+  }
+  
+
+  .place-rating {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #666;
+  }
+  
+  .place-actions a {
+    margin-right: 10px;
+    padding: 10px 20px;
+    background-color: #4CAF50; 
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+  
+  .place-actions a:hover {
+    background-color: #45a049;
+  }
+  

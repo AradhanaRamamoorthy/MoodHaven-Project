@@ -4,7 +4,7 @@ import { places } from "../config/mongoCollections.js";
 
 import axios from 'axios';
 
-const API_KEY = 'AIzaSyBAWaIJv0tNBnVQPoff22IhYsNtxwc1MY8'; 
+const API_KEY = ''; //Update the API key 
 
 const createPlaces = async(placeName, activity) => {
     placeName = helpers.checkString(placeName, 'placeName');

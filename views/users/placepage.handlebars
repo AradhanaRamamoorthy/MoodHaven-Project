@@ -1,4 +1,19 @@
-<h1>{{message}}</h1>
-<p>Your selected activity: {{selectedActivity}}</p>
-
-
+<h1>Places Suggested</h1>
+<main>
+  {{#each places}}
+    <div class="place-container">
+      <div class="place-icon">
+        <img src="{{#if icon_photo}}{{icon_photo}}{{else}}/path/to/default/image.jpg{{/if}}" alt="Place Icon" class="place-image" />
+      </div>
+      <div class="place-details">
+        <h3 class="place-name">
+          <a href="{{website}}" target="_blank">{{placeName}}</a>
+        </h3>
+        <p class="place-address">
+          <a href="{{url}}" target="_blank">{{address}}</a>
+        </p>
+        <p class="place-rating"><strong>Rating:</strong> {{#if google_rating}}{{google_rating}}{{else}}Not rated yet{{/if}} / 5</p>
+      </div>
+    </div>
+  {{/each}}
+</main>

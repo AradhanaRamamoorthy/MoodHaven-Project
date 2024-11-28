@@ -17,14 +17,5 @@ router.get('/:interest/activities', async (req, res) => {
     }
 });
 
-router.post('/placepage', async (req, res) => {
-    const activity = req.body.activity;
-    console.log(activity);
-    if (!activity) {
-        return res.status(400).json({ error: "Invalid or missing activity." });
-    }
-    res.render('users/placepage', { selectedActivity: activity });
-});
-
 
 export default router;

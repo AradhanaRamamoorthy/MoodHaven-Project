@@ -1,6 +1,9 @@
 const location_access = document.getElementById("nextPageBtn");
+if(location_access)
+{
 const selectedActivityInput = document.getElementById('selectedActivityInput');
-
+const errorContainer = document.getElementById('error-container');
+const errorMessage = errorContainer.getElementsByClassName('text-goes-here')[0];
 location_access.addEventListener('click', (event) => {
   event.preventDefault();
   const selectedActivity = selectedActivityInput.value;
@@ -21,12 +24,26 @@ location_access.addEventListener('click', (event) => {
       });
       
       if (response.ok) {
-        window.location.href = `/placepage/${encodeURIComponent(selectedActivity)}`;
+        const hiddenForm = document.createElement('form');
+        hiddenForm.action = `/placepage/${encodeURIComponent(selectedActivity)}`;
+        hiddenForm.method = 'GET';
+        document.body.appendChild(hiddenForm);
+        hiddenForm.submit();
       } else {
-        alert('Failed to fetch places. Please try again.');
+        const errorData = await response.json();
+        errorMessage.textContent = errorData.error || "Failed to fetch the places for the activity selected!";
+        errorContainer.classList.remove('hidden'); 
       }
+     }
+    catch(e)
+    {
+      errorMessage.textContent = "Unable to connect to the server. Please try again!";
+      errorContainer.classList.remove('hidden');
+    }
     });
   } else {
-    alert('Geolocation is not supported by this browser.');
+    errorMessage.textContent = "Geolocation is not supported by this browser.";
+    errorContainer.classList.remove('hidden');
   }
 });
+}

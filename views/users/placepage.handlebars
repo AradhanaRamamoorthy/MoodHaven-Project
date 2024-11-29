@@ -1,4 +1,7 @@
 <h1>Places Suggested</h1>
+{{#if hasErrors}}
+  <p class="error">{{errors}}</p>
+{{/if}}
 <main>
   {{#each places}}
     <div class="place-container">

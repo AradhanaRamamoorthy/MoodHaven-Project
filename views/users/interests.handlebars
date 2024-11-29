@@ -1,4 +1,7 @@
 <h1>Select an Interest</h1>
+{{#if hasErrors}}
+  <p class="error">{{errors}}</p>
+{{/if}}
 <form id="interestForm" action="/interests/:interest/activities" method="POST">
   <div class="form-floating col-3">
     <select name="interest" class="form-select" id="interestselect" required>
@@ -21,15 +24,12 @@
 </div>
 
 <form id="activityForm" action="/interests/placepage" method="POST">
-    <input type="hidden" name="activity" id="selectedActivityInput" value="">
-    <button type="submit" id="nextPageBtn" class="btn btn-secondary mt-3">Next</button>
-</form>
-
-
+    <input type="hidden" name="activity" id="selectedActivityInput" value=""> 
 <div class="interestForm hidden" id="error-container">
   <div class="alert alert-danger text-goes-here"></div>
 </div>
-
+    <button type="submit" id="nextPageBtn" class="submit_button hidden">Next</button>
+</form>
 <script 
   src="https://code.jquery.com/jquery-2.2.4.min.js" 
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" 

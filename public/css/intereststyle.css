@@ -82,6 +82,10 @@ header, footer {
     padding: 1rem;
 }
 
+.hidden {
+    display: none;
+}
+
 @media (max-width: 768px) {
     main {
         max-width: 90%;

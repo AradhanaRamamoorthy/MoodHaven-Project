@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
             activitySelect.appendChild(option);
         });
         activitiesContainer.classList.remove("hidden");
+        nextPageBtn.classList.remove("hidden");
         activityForm.classList.remove("hidden");
     }
     activitySelect.addEventListener("change", function () {

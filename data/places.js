@@ -7,7 +7,6 @@ dotenv.config({path: '../config/config.env'})
 import axios from 'axios';
 
 const API_KEY = process.env.API_KEY;
-//const API_KEY = 'AIzaSyAypmeTbBN2uotEQ8sQflxumAa_3kaRkCk'; //Update the API key 
 
 const createPlaces = async(placeName, activity) => {
     placeName = helpers.checkString(placeName, 'placeName');

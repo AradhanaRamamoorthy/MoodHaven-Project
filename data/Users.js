@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 let exportedMethods = {
     async addUser(firstName, lastName, email, password){
-        const hashedPassword = await bcrypt.hash(password.trim(), 10);
+        const hashedPassword = await bcrypt.hash(password.trim(), 13);
         let newUser = {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
@@ -33,7 +33,7 @@ let exportedMethods = {
         // New user structure for Google account
         let newUser = {     
             firstName: firstName.trim(),  
-            lastName: lastName.trim(),    
+            lastName: lastName?.trim() || '',    
             email: email.trim(),          
             password: null,               
             profilePic: profilePic || "/public/images/default.png",

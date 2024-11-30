@@ -8,9 +8,7 @@ import passport from 'passport';
 import session from 'express-session'
 import configurePassport from './config/passport.js'
 
-
 configurePassport(passport)
-
 
 import configRoutesFunction from './routes/index.js';
 import exphbs from 'express-handlebars';
@@ -22,8 +20,8 @@ app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.use(session({
     secret: 'secret',
-    resave: false, //not saving session if nothing is modified
-    saveUninitialized: false //don't create a session unti something is stored
+    resave: false, 
+    saveUninitialized: false 
     //cookie: {secure: true}
 }))
 app.use(passport.initialize());

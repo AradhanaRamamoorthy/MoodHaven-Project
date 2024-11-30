@@ -1,14 +1,16 @@
 import {Router} from 'express';
 const router = Router();
 import userDataFunctions from '../data/Users.js';
-import {users, allInterests} from '../config/mongoCollections.js';
+import {users} from '../config/mongoCollections.js';
+import { allInterests } from "../config/mongoCollections.js";
+import { interestData } from '../data/index.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import {ObjectId} from 'mongodb';
 
 router
-    .route('/')
+    .route('/signup')
     .get(async (req, res) => {
         try {
             res.render('./users/signup', {
@@ -22,14 +24,39 @@ router
     .post(async (req, res) =>{
         const {firstName, lastName, email, password, confirmPassword} = req.body;
         try{
+            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                // res.render('./users/signup', {
+                //     layout: 'login',
+                //     title: 'Signup',
+                //     hasError: true,
+                //     error: "All fields are required."
+                // });
+                return res.status(400).json({ error: 'All fields are required.' });
+            }
+
             if (password !== confirmPassword) {
-                res.render('./users/signup', {
-                    layout: 'login',
-                    title: 'Signup',
-                    hasError: true,
-                    error: "Passwords don't match"
-                });
-            } else{
+                // res.render('./users/signup', {
+                //     layout: 'login',
+                //     title: 'Signup',
+                //     hasError: true,
+                //     error: "Passwords are not matching."
+                // });
+                return res.status(400).json({ error: 'Passwords are not matching.' });
+            } 
+            const usersCollection = await users();
+            const existingUser = await usersCollection.findOne({ email: email.trim() });
+            
+            if(existingUser){
+                // res.render('./users/signup', {
+                //     layout: 'login',
+                //     title: 'Signup',
+                //     hasError: true,
+                //     error: "User already exists with same email."
+                // });
+                return res.status(400).json({ error: 'User already exists with same email.' });
+            }
+
+            else{
                 await userDataFunctions.addUser(firstName, lastName, email, password);
                 res.render('./users/login', {
                     layout: 'login',
@@ -42,7 +69,7 @@ router
     });
 
 router
-    .route('/login')
+    .route('/')
     .get(async (req, res) => {
         try {
             res.render('./users/login', {
@@ -58,56 +85,112 @@ router
         const usersCollection = await users();
         const user = await usersCollection.findOne({ email: email.trim() });
         try {
+            if(!email || !password ){
+                return res.status(400).json({ error: 'Both email and password are required.' });
+            }
             if (!user) {
-                return res.render('./users/login', {
-                    layout: 'login',
-                    title: 'Login',
-                    hasError: true,
-                    error: "Invalid email or password"
-                });
+                // return res.render('./users/login', {
+                //     layout: 'login',
+                //     title: 'Login',
+                //     hasError: true,
+                //     error: "Invalid email or password"
+                // });
+                return res.status(401).json({ error: 'Invalid email or password.' });
             }
 
             const isPasswordValid = await bcrypt.compare(password.trim(), user.password);
             if (!isPasswordValid) {
-                return res.render('./users/login', {
-                    layout: 'login',
-                    title: 'Login',
-                    hasError: true,
-                    error: "Invalid email or password"
-                });
+                // return res.render('./users/login', {
+                //     layout: 'login',
+                //     title: 'Login',
+                //     hasError: true,
+                //     error: "Invalid email or password"
+                // });
+                return res.status(401).json({ error: 'Invalid email or password.' });
             }
 
-            // if (user.recentVisit === null) {
-            //     // await usersCollection.updateOne(
-            //     //     { _id: user._id },
-            //     //     { $set: { recentVisit: new Date() } }
-            //     // );
-            //     // req.session.user = { id: user._id, email: user.email };
-            //     // const interestCollection = await allInterests();
-            //     // const interests = await interestCollection.find({}).toArray();
-            //     // const interestNames = interests.map(interest => ({
-            //     //     interestName: interest.interestName
-            //     // }));
+            if (user.recentVisit === null) {
+                // await usersCollection.updateOne(
+                //     { _id: user._id },
+                //     { $set: { recentVisit: new Date() } }
+                // );
+                // req.session.user = { id: user._id, email: user.email };
+                // const interestCollection = await allInterests();
+                // const interests = await interestCollection.find({}).toArray();
+                // const interestNames = interests.map(interest => ({
+                //     interestName: interest.interestName
+                // }));
 
-            //     return res.render('./users/home', {
-            //         layout: 'main',
-            //         title: 'Home'
-            //         //interests: interestNames
-            //     });
-            // } else {
-            //     return res.redirect('/moodQuestionnaire');
-            // }
+                // return res.render('./users/home', {
+                //     layout: 'main',
+                //     title: 'Home'
+                //     //interests: interestNames
+                // });
+                //return res.status(200).json({ redirect: '/profile-setup' });
+                return res.status(200).json({ redirect: '/moods/moodpage' });
+            } else {
+                return res.status(200).json({ redirect: '/moods/moodpage' });
+            }
              //Set the session for the successful login:
-          req.session.user = { id: user._id, email: user.email };
-          return res.redirect('/moodpage');
+        //   req.session.user = { id: user._id, email: user.email };
+        //   return res.status(200).json({ redirect: '/moods/moodpage' });
         } catch (e) {
             res.status(500).json({ error: e });
         }
     });
 
 router 
-    .route('/home')
-    // .post((req, res) => {
+    .route('/profile-setup')
+    // .get(async (req, res) => {
+    //     try {
+    //         const interestsCollection = await allInterests(); 
+    //         const interests = await interestsCollection.find({}).toArray();
+    //         res.render('./users/home', {
+    //           layout: 'main',
+    //           title: 'Complete Your Profile',
+    //           allInterests: interests
+    //         });
+    //       } catch (error) {
+    //         console.error(error);
+    //         res.status(500).send('Internal Server Error');
+    //       }
+    // })
+    // .post(async (req, res) => {
+    //     try {
+    //         const { bio, interests } = req.body;
+    //         const userId = req.user._id; 
+    //         const userCollection = await users();
+        
+    //         if (!interests || interests.length < 1 || interests.length > 4) {
+    //           return res.status(400).json({ error: 'You must select between 1 and 4 interests.' });
+    //         }
+        
+    //         const updatedUser = {
+    //           bio: bio?.trim() || '', 
+    //           interests: Array.isArray(interests) ? interests : [interests], 
+    //         };
+        
+    //         // // Handle file upload if provided
+    //         // if (req.file) {
+    //         //   updatedUser.profilePicture = `/uploads/${req.file.filename}`;
+    //         // }
+        
+    //         // Update the user in the database
+    //         const result = await userCollection.updateOne(
+    //           { _id: userId },
+    //           { $set: updatedUser }
+    //         );
+        
+    //         if (result.modifiedCount === 0) {
+    //           throw new Error('Failed to update profile.');
+    //         }
+        
+    //         res.status(200).json({ message: 'Profile updated successfully.' });
+    //       } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ error: error.message });
+    //       }
+    // })
     //     if (user.recentVisit === null) {
     //         // await usersCollection.updateOne(
     //         //     { _id: user._id },

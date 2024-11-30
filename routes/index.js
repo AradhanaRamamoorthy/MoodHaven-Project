@@ -9,7 +9,7 @@ import { static as staticDir } from 'express';
 const constructorMethod = (app) => {
   app.use('/', userRoutes);  
   app.use('/auth', authRoutes); 
-  app.use('/', moodsRoute);  
+  app.use('/moods', moodsRoute);  
   app.use('/interests', interestsRoute);  
   app.use('/',placesRoute);
   app.use('/public', staticDir('public'));  

@@ -1,11 +1,10 @@
 <div class="signup-container">
         <h2>Login</h2>
 
-        {{#if hasError}}
-            <p class="error">{{error}}</p>
-        {{/if}}
-
-        <form action="/login" method="POST">
+        <div class = "loginForm hidden" id = "error-container">
+            <div class = "alert alert-danger text-goes-here"></div>
+        </div>
+        <form id="loginForm" action="/" method="POST">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
@@ -17,13 +16,17 @@
             </div>
 
             <button type="submit">Login</button>
+
+            <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+            <script src="/public/js/login.js"></script>
         </form>
     </div>
 
     <br>
     <div class="card-footer text-center">
         <div class="small">
-            <a href="/">Don't have an account yet? Signup</a><br>
+            <a href="/signup">Don't have an account yet? Signup</a><br>
             <a href="/reset"><i>Forgot Password?</i></a>
         </div>
     </div>

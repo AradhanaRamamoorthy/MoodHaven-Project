@@ -40,7 +40,7 @@ router.route('/activitypage')
             }
 
             const associated_Interests = moodSelected.interest;
-            return res.status(200).render('users/interests', {
+            return res.status(200).render('./users/interests', {
                 selectedMood: moodSelected.moodName,
                 interests: associated_Interests,
                 layout: 'mainInterests'

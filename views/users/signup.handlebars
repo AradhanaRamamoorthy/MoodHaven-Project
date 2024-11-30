@@ -1,9 +1,11 @@
 <div class="signup-container">
         <h2>Signup</h2>
-        {{#if hasError}}
-            <p class="error">{{error}}</p>
-        {{/if}}
-        <form action="/" method="POST">
+
+        <div class = "signupForm hidden" id = "error-container">
+            <div class = "alert alert-danger text-goes-here"></div>
+        </div>
+
+        <form id="signupForm" action="/signup" method="POST">
             <div class="form-group">
                 <label for="firstName">First Name:</label>
                 <input type="text" id="firstName" name="firstName" required>
@@ -29,13 +31,11 @@
                 <input type="password" id="confirmPassword" name="confirmPassword" required>
             </div>
 
-            {{!-- {{#if error}}
-                <div style="color: red;">
-                    
-                </div>
-            {{/if}} --}}
-
             <button type="submit">Signup</button>
+
+            <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+            <script src="/public/js/signup.js"></script>
         </form>
     </div>
 
@@ -43,6 +43,5 @@
     <div class="card-footer text-center">
         <div class="small">
             <a href="/login">Already have an account? Login</a><br>
-            {{!-- <a href=""><i>Forgot Password?</i></a> --}}
         </div>
     </div>

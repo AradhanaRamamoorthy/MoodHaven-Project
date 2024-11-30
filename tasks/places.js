@@ -24,11 +24,14 @@ try
         { name: "XCEL Athletic Lifestyle", activities: ["Shadowboxing", "Bag work", "Technique drilling", "Solo practice", "Guided class", "Dynamic group"] },
         { name: "9th Street Gym", activities: ["Treadmill run", "Form improvement drills", "Virtual marathon training", "Interval training", "Trail run/City sprint", "Scenic route jog"] }
     ];
+ 
+    const coordinates = [];
 
     for (const place of places) {
         try {
             const createdPlace = await createPlaces(place.name, place.activities);
-            const coordinates = await getCoordinatesofPlaces(createdPlace._id.toString());
+            const place_coordinates = await getCoordinatesofPlaces(createdPlace._id.toString());
+            coordinates.push({ id: createdPlace._id, coordinates: place_coordinates });
         } catch (e) {
             console.log(e);
         }

@@ -15,6 +15,7 @@ location_access.addEventListener('click', (event) => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
+      try {
       const response = await fetch('/location', {
         method: 'POST',
         headers: {

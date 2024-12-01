@@ -26,7 +26,7 @@ location_access.addEventListener('click', (event) => {
       
       if (response.ok) {
         const hiddenForm = document.createElement('form');
-        hiddenForm.action = `/placepage/${encodeURIComponent(selectedActivity)}`;
+        hiddenForm.action = `/places/placepage/${encodeURIComponent(selectedActivity)}`;
         hiddenForm.method = 'GET';
         document.body.appendChild(hiddenForm);
         hiddenForm.submit();

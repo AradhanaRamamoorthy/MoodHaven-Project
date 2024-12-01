@@ -11,7 +11,7 @@ const constructorMethod = (app) => {
   app.use('/auth', authRoutes); 
   app.use('/moods', moodsRoute);  
   app.use('/interests', interestsRoute);  
-  app.use('/',placesRoute);
+  app.use('/places',placesRoute);
   app.use('/public', staticDir('public'));  
   app.use('*', (req, res) => {
     res.redirect('/');  

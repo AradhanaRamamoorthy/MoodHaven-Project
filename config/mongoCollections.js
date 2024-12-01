@@ -21,3 +21,4 @@ export const users = getCollectionFn('users');
 export const moods = getCollectionFn('moods');
 export const allInterests = getCollectionFn('allInterests');
 export const places = getCollectionFn('places');
+export const reviews = getCollectionFn('reviews');

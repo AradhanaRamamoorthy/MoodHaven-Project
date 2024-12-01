@@ -77,17 +77,19 @@ router
                 });
             }
 
-            // if (user.recentVisit === null) {
-            //     // await usersCollection.updateOne(
-            //     //     { _id: user._id },
-            //     //     { $set: { recentVisit: new Date() } }
-            //     // );
-            //     // req.session.user = { id: user._id, email: user.email };
-            //     // const interestCollection = await allInterests();
-            //     // const interests = await interestCollection.find({}).toArray();
-            //     // const interestNames = interests.map(interest => ({
-            //     //     interestName: interest.interestName
-            //     // }));
+            if (user.recentVisit === null) {
+                await usersCollection.updateOne(
+                    { _id: user._id },
+                    { $set: { recentVisit: new Date() } }
+                );
+            }
+                req.session.user = { _id: user._id.toString(), email: user.email };
+
+                //const interestCollection = await allInterests();
+                //const interests = await interestCollection.find({}).toArray();
+                //const interestNames = interests.map(interest => ({
+                    //interestName: interest.interestName
+                //}));
 
             //     return res.render('./users/home', {
             //         layout: 'main',
@@ -95,11 +97,15 @@ router
             //         //interests: interestNames
             //     });
             // } else {
-            //     return res.redirect('/moodQuestionnaire');
-            // }
+                 //return res.render('/moodQuestionnaire');
+             //}
              //Set the session for the successful login:
-          req.session.user = { id: user._id, email: user.email };
-          return res.redirect('/moodpage');
+          //req.session.user = { id: user._id, email: user.email };
+          if (user.searched) {
+            return res.redirect('/reviewpage');
+          } else {
+            return res.redirect('/moodpage');
+          }
         } catch (e) {
             res.status(500).json({ error: e });
         }

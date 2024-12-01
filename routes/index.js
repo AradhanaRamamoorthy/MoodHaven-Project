@@ -3,6 +3,7 @@ import authRoutes from './auth.js';
 import moodsRoute from './moods.js';
 import interestsRoute from './interests.js';  
 import placesRoute from './places.js';
+import reviewRoute from './review.js';
 
 import { static as staticDir } from 'express';
 
@@ -11,6 +12,8 @@ const constructorMethod = (app) => {
   app.use('/auth', authRoutes); 
   app.use('/', moodsRoute);  
   app.use('/interests', interestsRoute);  
+  app.use('/reviewpage', reviewRoute); 
+  app.use('/',reviewRoute);
   app.use('/',placesRoute);
   app.use('/public', staticDir('public'));  
   app.use('*', (req, res) => {

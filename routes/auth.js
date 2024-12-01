@@ -23,7 +23,7 @@ router
 
             const user = await usersCollection.findOne({ email: email.trim() });
             if (!user.recentVisit) {
-                return res.redirect('/profile-setup')
+                return res.status(200).json({ redirect: '/moods/moodpage' });
             } else {
                 return res.status(200).json({ redirect: '/moods/moodpage' });
             }    

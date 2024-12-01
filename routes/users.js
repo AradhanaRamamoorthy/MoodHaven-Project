@@ -58,10 +58,11 @@ router
 
             else{
                 await userDataFunctions.addUser(firstName, lastName, email, password);
-                res.render('./users/login', {
-                    layout: 'login',
-                    title: 'Login'
-                }); 
+                return res.status(200).json({ redirect: '/' });
+                // res.render('./users/login', {
+                //     layout: 'login',
+                //     title: 'Login'
+                // }); 
             }
         } catch (e) {
             res.status(500).json({error: e});

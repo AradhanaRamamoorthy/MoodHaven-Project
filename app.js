@@ -21,8 +21,8 @@ app.set('view engine', 'handlebars');
 app.use(session({
     secret: 'secret',
     resave: false, 
-    saveUninitialized: false 
-    //cookie: {secure: true}
+    saveUninitialized: false,
+    cookie: {secure: false}
 }))
 app.use(passport.initialize());
 app.use(passport.session());

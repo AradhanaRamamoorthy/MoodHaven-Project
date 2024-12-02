@@ -111,11 +111,12 @@ router
             }
 
             if (user.recentVisit === null) {
-                // await usersCollection.updateOne(
-                //     { _id: user._id },
-                //     { $set: { recentVisit: new Date() } }
-                // );
-                // req.session.user = { id: user._id, email: user.email };
+                await usersCollection.updateOne(
+                     { _id: user._id },
+                     { $set: { recentVisit: new Date() } }
+                 );
+            }
+                req.session.user = { _id: user._id.toString(), email: user.email };
                 // const interestCollection = await allInterests();
                 // const interests = await interestCollection.find({}).toArray();
                 // const interestNames = interests.map(interest => ({
@@ -128,10 +129,11 @@ router
                 //     //interests: interestNames
                 // });
                 //return res.status(200).json({ redirect: '/profile-setup' });
-                return res.status(200).json({ redirect: '/moods/moodpage' });
-            } else {
-                return res.status(200).json({ redirect: '/moods/moodpage' });
-            }
+         if (user.searched) {
+            return res.status(200).json({ redirect: '/places/reviewpage' });
+         } else {
+            return res.status(200).json({ redirect: '/moods/moodpage' });
+         }
              //Set the session for the successful login:
         //   req.session.user = { id: user._id, email: user.email };
         //   return res.status(200).json({ redirect: '/moods/moodpage' });

@@ -1,9 +1,6 @@
 const location_access = document.getElementById("nextPageBtn");
-if(location_access)
-{
 const selectedActivityInput = document.getElementById('selectedActivityInput');
-const errorContainer = document.getElementById('error-container');
-const errorMessage = errorContainer.getElementsByClassName('text-goes-here')[0];
+
 location_access.addEventListener('click', (event) => {
   event.preventDefault();
   const selectedActivity = selectedActivityInput.value;
@@ -15,7 +12,6 @@ location_access.addEventListener('click', (event) => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
-      try {
       const response = await fetch('/location', {
         method: 'POST',
         headers: {
@@ -25,26 +21,12 @@ location_access.addEventListener('click', (event) => {
       });
       
       if (response.ok) {
-        const hiddenForm = document.createElement('form');
-        hiddenForm.action = `/places/placepage/${encodeURIComponent(selectedActivity)}`;
-        hiddenForm.method = 'GET';
-        document.body.appendChild(hiddenForm);
-        hiddenForm.submit();
+        window.location.href = `/places/placepage/${encodeURIComponent(selectedActivity)}`;
       } else {
-        const errorData = await response.json();
-        errorMessage.textContent = errorData.error || "Failed to fetch the places for the activity selected!";
-        errorContainer.classList.remove('hidden'); 
+        alert('Failed to fetch places. Please try again.');
       }
-     }
-    catch(e)
-    {
-      errorMessage.textContent = "Unable to connect to the server. Please try again!";
-      errorContainer.classList.remove('hidden');
-    }
     });
   } else {
-    errorMessage.textContent = "Geolocation is not supported by this browser.";
-    errorContainer.classList.remove('hidden');
+    alert('Geolocation is not supported by this browser.');
   }
 });
-}

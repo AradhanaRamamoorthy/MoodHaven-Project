@@ -9,6 +9,13 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import {ObjectId} from 'mongodb';
 
+function isAuthenticated(req, res, next) {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    next();
+}
+
 router
     .route('/signup')
     .get(async (req, res) => {
@@ -25,44 +32,22 @@ router
         const {firstName, lastName, email, password, confirmPassword} = req.body;
         try{
             if (!firstName || !lastName || !email || !password || !confirmPassword) {
-                // res.render('./users/signup', {
-                //     layout: 'login',
-                //     title: 'Signup',
-                //     hasError: true,
-                //     error: "All fields are required."
-                // });
                 return res.status(400).json({ error: 'All fields are required.' });
             }
 
             if (password !== confirmPassword) {
-                // res.render('./users/signup', {
-                //     layout: 'login',
-                //     title: 'Signup',
-                //     hasError: true,
-                //     error: "Passwords are not matching."
-                // });
                 return res.status(400).json({ error: 'Passwords are not matching.' });
             } 
             const usersCollection = await users();
             const existingUser = await usersCollection.findOne({ email: email.trim() });
             
             if(existingUser){
-                // res.render('./users/signup', {
-                //     layout: 'login',
-                //     title: 'Signup',
-                //     hasError: true,
-                //     error: "User already exists with same email."
-                // });
                 return res.status(400).json({ error: 'User already exists with same email.' });
             }
 
             else{
                 await userDataFunctions.addUser(firstName, lastName, email, password);
                 return res.status(200).json({ redirect: '/' });
-                // res.render('./users/login', {
-                //     layout: 'login',
-                //     title: 'Login'
-                // }); 
             }
         } catch (e) {
             res.status(500).json({error: e});
@@ -90,23 +75,11 @@ router
                 return res.status(400).json({ error: 'Both email and password are required.' });
             }
             if (!user) {
-                // return res.render('./users/login', {
-                //     layout: 'login',
-                //     title: 'Login',
-                //     hasError: true,
-                //     error: "Invalid email or password"
-                // });
                 return res.status(401).json({ error: 'Invalid email or password.' });
             }
 
             const isPasswordValid = await bcrypt.compare(password.trim(), user.password);
             if (!isPasswordValid) {
-                // return res.render('./users/login', {
-                //     layout: 'login',
-                //     title: 'Login',
-                //     hasError: true,
-                //     error: "Invalid email or password"
-                // });
                 return res.status(401).json({ error: 'Invalid email or password.' });
             }
 
@@ -143,169 +116,158 @@ router
     });
 
 router 
-    .route('/profile-setup')
-    // .get(async (req, res) => {
-    //     try {
-    //         const interestsCollection = await allInterests(); 
-    //         const interests = await interestsCollection.find({}).toArray();
-    //         res.render('./users/home', {
-    //           layout: 'main',
-    //           title: 'Complete Your Profile',
-    //           allInterests: interests
-    //         });
-    //       } catch (error) {
-    //         console.error(error);
-    //         res.status(500).send('Internal Server Error');
-    //       }
-    // })
-    // .post(async (req, res) => {
-    //     try {
-    //         const { bio, interests } = req.body;
-    //         const userId = req.user._id; 
-    //         const userCollection = await users();
-        
-    //         if (!interests || interests.length < 1 || interests.length > 4) {
-    //           return res.status(400).json({ error: 'You must select between 1 and 4 interests.' });
-    //         }
-        
-    //         const updatedUser = {
-    //           bio: bio?.trim() || '', 
-    //           interests: Array.isArray(interests) ? interests : [interests], 
-    //         };
-        
-    //         // // Handle file upload if provided
-    //         // if (req.file) {
-    //         //   updatedUser.profilePicture = `/uploads/${req.file.filename}`;
-    //         // }
-        
-    //         // Update the user in the database
-    //         const result = await userCollection.updateOne(
-    //           { _id: userId },
-    //           { $set: updatedUser }
-    //         );
-        
-    //         if (result.modifiedCount === 0) {
-    //           throw new Error('Failed to update profile.');
-    //         }
-        
-    //         res.status(200).json({ message: 'Profile updated successfully.' });
-    //       } catch (error) {
-    //         console.error(error);
-    //         res.status(500).json({ error: error.message });
-    //       }
-    // })
-    //     if (user.recentVisit === null) {
-    //         // await usersCollection.updateOne(
-    //         //     { _id: user._id },
-    //         //     { $set: { recentVisit: new Date() } }
-    //         // );
-    //         // req.session.user = { id: user._id, email: user.email };
-    //         const interestCollection = await allInterests()
-    //         const interests = await interestCollection.find({}).toArray();
-
-    //         const interestNames = interests.map(interest => ({
-    //             interestName: interest.interestName 
-    //         }));
-    //         return res.render('./users/home', {
-    //             layout: 'main',
-    //             title: 'Home',
-    //             interests: interestNames
-    //         }); 
-    //     } else{
-    //         res.redirect('/moodQuestionnaire')
-    //     }
-    // })
-    // .put(async (req, res) => {
-    //     const { bio, userInterests } = req.body;
-    //     try {
-    //         if (!userInterests || userInterests.length === 0) {
-    //             return res.status(400).send("Please select at least one interest.");
-    //         }
-
-    //         const selectedInterests = Array.isArray(userInterests) ? userInterests : [userInterests];
-    //         if (selectedInterests.length > 5) {
-    //             return res.status(400).send("You can only select a maximum of 5 interests.");
-    //         }
-
-    //         let updateData = {
-    //             bio: bio || "",
-    //             userInterests: selectedInterests
-    //         };
-
-    //         const usersCollection = await users();
-    //         await usersCollection.updateOne(
-    //             { _id: req.session.user.id },
-    //             { $set: updateData }
-    //         );
-
-    //         res.render('./users/moodQuestionnaire', {
-    //             layout: 'main',
-    //             title: 'Mood Questionnaire'
-    //         });
-
-    //     } catch (error) {
-    //         res.status(500).json({ error: error.message });
-    //     }
-    // });
-
-//Added in a new Route for the Mood Questionaire Page under moods.js file
-/*router 
-    .route('/moodQuestionnaire')
-    .get(async (req, res) => {
+    .route('/profileSetup')
+    .get(isAuthenticated, async (req, res) => {
         try {
-            res.render('./users/moodQuestionnaire', {
+            const interestCollection = await allInterests();
+            const interests = await interestCollection.find({}).toArray();
+            const interestNames = interests.map(interest => ({
+                interestName: interest.interestName,
+            }));
+
+            res.render('./users/home', {
                 layout: 'main',
-                title: 'Mood Questionnaire'
+                title: 'Complete Your Profile',
+                interestNames,
             });
-        } catch(e){
-            res.status(500).json({ error: e.message });
+        } catch (error) {
+            console.error('Error fetching interests:', error);
+            res.status(500).send('Internal Server Error');
         }
-    })*/
-    // .post(async (req, res) => {
-    //     const { email, password } = req.body;
-    //     try {
-    //         const usersCollection = await users();
-    //         const user = await usersCollection.findOne({ email: email.trim() });
-    //         if (!user || user.password !== password.trim()) {
-    //             return res.status(400).redirect('/login');
-    //         }
-    //         //req.session.user = { id: user._id, email: user.email }; // set session data
-    //         if (user.recentVisit === null) {
-    //             // await usersCollection.updateOne(
-    //             //     { _id: user._id },
-    //             //     { $set: { recentVisit: new Date() } }
-    //             // );
-    //             // req.session.user = { id: user._id, email: user.email };
-    //             res.render('./users/moodQuestionnaire', {
-    //                 layout: 'main',
-    //                 title: 'Mood Questionnaire'
-    //             });
-    //         } else{
-    //             await usersCollection.updateOne(
-    //                 { _id: user._id },
-    //                 { $set: { recentVisit: new Date() } }
-    //             );
-    //             req.session.user = { id: user._id, email: user.email };
-    //             res.render('./users/moodQuestionnaire', {
-    //                 layout: 'main',
-    //                 title: 'Mood Questionnaire'
-    //             });
-    //         }
-    //     } catch (error) {
-    //         res.status(500).send('An error occurred during login');
-    //     }
-    // });
-
-router
-    .route('/profile')
-    .get(async (req, res) => {
+    })
+    .post(isAuthenticated, async (req, res) => {
         try {
-            res.render('./users/profile', {
+            const { bio, interests } = req.body;
+            console.log(interests);
+            const user = req.session.user;
+
+            if (!user) {
+                return res.redirect('/login');
+            }
+
+            const usersCollection = await users();
+            const updateData = {};
+            if (bio) updateData.bio = bio;
+            if (interests) updateData.interests = Array.isArray(interests) ? interests : [interests];
+            console.log(updateData)
+            const result = await usersCollection.updateOne(
+                { _id: new ObjectId(user.id) },
+                { $set: updateData }
+            );
+
+            if (result.modifiedCount === 0) {
+                throw new Error('No data updated, user may not exist or no changes made.');
+            }
+
+            res.redirect('/profile');
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            res.status(500).render('./users/home', {
                 layout: 'main',
-                title: 'Profile'
+                title: 'Complete Your Profile',
+                hasError: true,
+                error: 'Unable to update your profile. Please try again.',
+                bio: req.body.bio || '',
+                selectedInterests: req.body.interests || [],
+            });
+        }
+    });
+
+    router
+    .route('/updateProfile')
+    .get( async (req, res) => {
+        try {
+            console.log(req.session.user)
+            const user = req.session.user; 
+            console.log(user)
+            if (!user) {
+                return res.redirect('/login'); 
+            }
+    
+            const usersCollection = await users();
+            const userId = req.session.user.id;
+            const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+            const interestCollection = await allInterests();
+            const interests = await interestCollection.find({}).toArray();
+            const interestNames = interests.map(interest => ({
+                interestName: interest.interestName 
+             }));
+            res.render('./users/updateProfile', {
+                layout: 'main',
+                title: 'Update Profile',
+                interestNames: interestNames,
+
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                bio: userData.bio || 'No bio provided.',
+                interests: userData.interests || [],  
             });
         } catch (e) {
-            res.status(500).json({error: e});
+            res.status(500).json({ error: e });
+        }
+    }).post(async (req, res) => {
+        console.log("inside update Profile : " , req.session.user);
+        try {
+            const { firstName, lastName, bio, interests } = req.body;
+    
+            if (!firstName || !lastName) {
+                throw 'First name and last name are required.';
+            }
+    
+            const user = req.session.user; 
+            if (!user) {
+                return res.redirect('/login'); 
+            }
+            console.log("interests : " , interests);
+            const selectedInterests = interests ? interests : [];
+            const updatedUser = await profileDataFunction.updateUserProfile(
+                user.email,         
+                firstName.trim(),   
+                bio || null,        
+                selectedInterests,     
+                lastName.trim()     
+            );
+            res.redirect('/profile');
+        } catch (e) {
+           
+    
+            res.render('./users/profile', {
+                layout: 'main',  
+                title: 'Profile',  
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                bio: req.body.bio || 'No bio provided.',
+                interests: req.body.interests || [],  
+            });
+        }
+    });
+
+    router
+    .route('/profile')
+    .get(isAuthenticated, async (req, res) => {
+        try {
+            const usersCollection = await users();
+            const userId = req.session.user.id;
+
+            const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+            if (!userData) {
+                return res.status(404).send('User not found');
+            }
+
+            res.render('./users/profile', {
+                layout: 'main',
+                title: `${userData.firstName} ${userData.lastName}'s Profile`,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                bio: userData.bio || 'No bio provided.',
+                interests: userData.interests || [],
+            });
+        } catch (error) {
+            console.error('Error loading profile:', error);
+            res.status(500).send('Error loading profile page.');
         }
     });
 

@@ -1,7 +1,10 @@
-<p>Welcome to profile page</p>
-
-<p>Welcome to profile page</p>
-
+<style>
+  [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+     position: relative; 
+     opacity: 1; 
+    pointer-events: none;
+}
+</style>
 <style>
 .profile {
     box-shadow: 0px 0px 3px #ccc;
@@ -70,31 +73,34 @@ header {
 
                 </ul>
         </div>
-    </header>
+    </header>    
+<main>
+    <form action="/updateProfile" method="POST">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" value="{{firstName}}" required>
 
-    <main>
-{{#if firstName}}
-    <div>
-        
-        
-        {{#if profilePic}}
-            <img src="{{profilePic}}" alt="Profile Picture" style="max-width: 150px; max-height: 150px;" />
-        {{else}}
-            <p>No profile picture uploaded.</p>
-        {{/if}}
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" value="{{lastName}}" required>
+
+        <label for="bio">Bio:</label>
+        <textarea id="bio" name="bio">{{bio}}</textarea>
+
+        <label for="interests">Select Interests (at least 5 required):</label>
+        <div>Current selected interests : {{interests}}</div>
+        <div id="interests">
+           
+           
+        {{#each interestNames}}
+          <label><input type="checkbox" name="interests" value={{this.interestName}} {% if {{interests}}.includes({{this.interestName}}) %}checked{% endif %}> {{this.interestName}}</label>
+        {{/each}}
 
         
-            <p><strong>First Name:</strong> {{firstName}}</p>
-            <p><strong>Last Name:</strong> {{lastName}}</p>
-            <p><strong>Email:</strong> {{email}}</p>
-            <p><strong>Bio:</strong> {{#if bio}}{{bio}}{{else}}No bio provided.{{/if}}</p>
-            <p><strong>Interests:</strong> {{#if interests}}{{interests}}{{else}}No interests provided.{{/if}}</p>
-        
-    </div>
-{{else}}
-    <p>No user data available.</p>
-{{/if}}
+        </div>
 
+        <button type="submit">Save Changes</button>
+    </form>
 
-    </main>
+    <a href="/profile">Cancel</a>
+</main>
 </div>
+

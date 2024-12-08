@@ -2,6 +2,7 @@ import {Router} from 'express';
 const router = Router();
 import { placesData } from '../data/index.js';
 import { users } from '../config/mongoCollections.js';
+import userDataFunctions from '../data/Users.js';
 import helpers from '../helpers.js';
 import { ObjectId } from 'mongodb';
 
@@ -14,6 +15,12 @@ function isAuthenticated(req, res, next) {
 
 router.post('/location', async (req, res) => {
     const { latitude, longitude, activity } = req.body;
+    const userId = req.session.user?._id;
+    if (!userId) {
+      console.log('User ID not found in session.');
+    } else {
+      console.log('User ID:', userId);
+    }
     if(!latitude || !longitude) {
       res.status(400).json({ error: 'Invalid location data.' });
     }
@@ -21,6 +28,7 @@ router.post('/location', async (req, res) => {
       res.status(400).json({ error: 'Activity is required.' });
     }
     try {
+      const update_User_location = await userDataFunctions.updateUserLocation(userId, latitude, longitude);
       res.status(200).json({ message: 'Location and activity received successfully' });
     } catch (e) {
       res.status(500).json({ error: e });

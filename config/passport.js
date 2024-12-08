@@ -10,7 +10,6 @@ async function configurePassport(passport) {
             callbackURL: '/auth/google/callback',
         },
         async (accessToken, refreshToken, profile, cb) => {
-            //console.log(profile);
             const email = profile.emails ? profile.emails[0].value : null;
             const firstName = profile.name.givenName;
             const lastName = profile.name.familyName;
@@ -20,27 +19,12 @@ async function configurePassport(passport) {
                 let user = await usersCollection.findOne({ email: email });
                 if(!user){
                     user = await Users.addGoogleUser(firstName, lastName, email, profilePic);
-                    //console.log(user);
                 }
                 return cb(null, user)
             } catch(e){
                 console.log(e);
             }
         }
-            // googleId: "",
-            // displayName: "",
-            // firstName: firstName.trim(),
-            // lastName: lastName.trim(),
-            // email: email.trim(),
-            // password: password.trim(),
-            // profilePic: "/public/images/default.png",
-            // bio: "",
-            // interests: [],
-            // recentVisit: null,
-            // savedPlaces: [],
-            // searched: false,
-            // searchedPlaces: []
-        
     ));
 
     // passport.serializeUser((user, done) => {

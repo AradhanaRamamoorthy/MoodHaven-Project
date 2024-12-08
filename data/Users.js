@@ -30,7 +30,6 @@ let exportedMethods = {
     },
 
     async addGoogleUser(firstName, lastName, email, profilePic) {
-        // New user structure for Google account
         let newUser = {     
             firstName: firstName.trim(),  
             lastName: lastName?.trim() || '',    
@@ -45,7 +44,7 @@ let exportedMethods = {
             searchedPlaces: []
         };
     
-        const usersCollection = await users(); // Access the 'users' collection
+        const usersCollection = await users(); 
         const addUser = await usersCollection.insertOne(newUser);
     
         if (!addUser.acknowledged || !addUser.insertedId) {
@@ -58,7 +57,6 @@ let exportedMethods = {
     }   ,
 
     async getUserById (id) {
-        //id = checkId(id, 'id');
         const usersCollection = await users(); 
         const user = await usersCollection.findOne({_id: new ObjectId(id)});
         if (!user) {

@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
     activitySelect.addEventListener("change", function () {
         const selectedActivity = this.value;
         if (selectedActivity) {
-            selectedActivityInput.value = selectedActivity;  // Update hidden input field
+            selectedActivityInput.value = selectedActivity;  
         }
     });
 

@@ -14,8 +14,12 @@ router
     .get(passport.authenticate('google', 
         {failureRedirect: '/'}), 
         async (req, res) =>{
+            if (req.user) {
+                req.session.user = req.user; 
+              }
             const usersCollection = await users();
-            if (!req.user || !req.user.email) {
+            //console.log(req.session.user)
+            if (!req.session.user || !req.user.email) {
                 return res.status(400).json({ error: 'User email not found' });
             }
     
@@ -23,15 +27,14 @@ router
 
             const user = await usersCollection.findOne({ email: email.trim() });
             if (!user.recentVisit) {
-                return res.status(200).redirect('/moods/moodpage');
+                await usersCollection.updateOne(
+                    { _id: user._id },
+                    { $set: { recentVisit: new Date() } }
+                );
+                return res.status(200).redirect('/profileSetup');
             } else {
                 return res.status(200).redirect('/moods/moodpage');
             }    
-            //res.redirect('/moods/moodpage')
-            // render('./users/home', {
-            //     layout: 'main',
-            //     title: 'Home'
-            // }); 
     })
 
 router

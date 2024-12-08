@@ -1,6 +1,7 @@
 import {Router} from 'express';
 const router = Router();
 import userDataFunctions from '../data/Users.js';
+import profileDataFunction from '../data/profile.js'
 import {users} from '../config/mongoCollections.js';
 import { allInterests } from "../config/mongoCollections.js";
 import { interestData } from '../data/index.js';
@@ -87,9 +88,10 @@ router
                 await usersCollection.updateOne(
                      { _id: user._id },
                      { $set: { recentVisit: new Date() } }
-                 );
+                );
+                return res.status(200).redirect('/profileSetup');
             }
-                req.session.user = { _id: user._id.toString(), email: user.email };
+            req.session.user = { _id: user._id.toString(), email: user.email };
                 // const interestCollection = await allInterests();
                 // const interests = await interestCollection.find({}).toArray();
                 // const interestNames = interests.map(interest => ({
@@ -102,11 +104,11 @@ router
                 //     //interests: interestNames
                 // });
                 //return res.status(200).json({ redirect: '/profile-setup' });
-         if (user.searched) {
-            return res.status(200).json({ redirect: '/places/reviewpage' });
-         } else {
-            return res.status(200).json({ redirect: '/moods/moodpage' });
-         }
+            if (user.searched) {
+                return res.status(200).json({ redirect: '/places/reviewpage' });
+            } else {
+                return res.status(200).json({ redirect: '/moods/moodpage' });
+            }
              //Set the session for the successful login:
         //   req.session.user = { id: user._id, email: user.email };
         //   return res.status(200).json({ redirect: '/moods/moodpage' });
@@ -131,61 +133,41 @@ router
                 interestNames,
             });
         } catch (error) {
-            console.error('Error fetching interests:', error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: e });
         }
     })
     .post(isAuthenticated, async (req, res) => {
         try {
             const { bio, interests } = req.body;
-            console.log(interests);
             const user = req.session.user;
-
-            if (!user) {
-                return res.redirect('/login');
-            }
+            // if (!user) {
+            //     return res.redirect('/login');
+            // }
 
             const usersCollection = await users();
             const updateData = {};
             if (bio) updateData.bio = bio;
             if (interests) updateData.interests = Array.isArray(interests) ? interests : [interests];
-            console.log(updateData)
-            const result = await usersCollection.updateOne(
-                { _id: new ObjectId(user.id) },
+            const result = await usersCollection.findOneAndUpdate(
+                { _id: new ObjectId(user._id) },
                 { $set: updateData }
             );
 
             if (result.modifiedCount === 0) {
-                throw new Error('No data updated, user may not exist or no changes made.');
+                throw `No data updated, user may not exist or no changes made.`;
             }
-
             res.redirect('/profile');
         } catch (error) {
-            console.error('Error updating profile:', error);
-            res.status(500).render('./users/home', {
-                layout: 'main',
-                title: 'Complete Your Profile',
-                hasError: true,
-                error: 'Unable to update your profile. Please try again.',
-                bio: req.body.bio || '',
-                selectedInterests: req.body.interests || [],
-            });
+            res.status(500).json({ error: e });
         }
     });
 
-    router
+router
     .route('/updateProfile')
-    .get( async (req, res) => {
+    .get(isAuthenticated, async (req, res) => {
         try {
-            console.log(req.session.user)
-            const user = req.session.user; 
-            console.log(user)
-            if (!user) {
-                return res.redirect('/login'); 
-            }
-    
             const usersCollection = await users();
-            const userId = req.session.user.id;
+            const userId = req.session.user._id;
             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
             const interestCollection = await allInterests();
@@ -193,11 +175,11 @@ router
             const interestNames = interests.map(interest => ({
                 interestName: interest.interestName 
              }));
-            res.render('./users/updateProfile', {
+
+            res.render('./users/updateprofile', {
                 layout: 'main',
                 title: 'Update Profile',
                 interestNames: interestNames,
-
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
@@ -207,20 +189,15 @@ router
         } catch (e) {
             res.status(500).json({ error: e });
         }
-    }).post(async (req, res) => {
-        console.log("inside update Profile : " , req.session.user);
+    })
+    .post(isAuthenticated, async (req, res) => {
         try {
             const { firstName, lastName, bio, interests } = req.body;
     
             if (!firstName || !lastName) {
                 throw 'First name and last name are required.';
             }
-    
             const user = req.session.user; 
-            if (!user) {
-                return res.redirect('/login'); 
-            }
-            console.log("interests : " , interests);
             const selectedInterests = interests ? interests : [];
             const updatedUser = await profileDataFunction.updateUserProfile(
                 user.email,         
@@ -231,8 +208,6 @@ router
             );
             res.redirect('/profile');
         } catch (e) {
-           
-    
             res.render('./users/profile', {
                 layout: 'main',  
                 title: 'Profile',  
@@ -244,13 +219,12 @@ router
         }
     });
 
-    router
+router
     .route('/profile')
     .get(isAuthenticated, async (req, res) => {
         try {
             const usersCollection = await users();
-            const userId = req.session.user.id;
-
+            const userId = req.session.user._id;
             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
             if (!userData) {
                 return res.status(404).send('User not found');
@@ -264,6 +238,7 @@ router
                 email: userData.email,
                 bio: userData.bio || 'No bio provided.',
                 interests: userData.interests || [],
+                profilePic: userData.profilePic? userData.profilePic : 'No Profile Picture uploaded'
             });
         } catch (error) {
             console.error('Error loading profile:', error);

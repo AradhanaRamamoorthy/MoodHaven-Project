@@ -3,8 +3,16 @@ const router = Router();
 import { moodsData } from '../data/index.js';
 import helpers from '../helpers.js';
 
-router.route('/moodpage')
-    .get(async(req,res) => {
+function isAuthenticated(req, res, next) {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    next();
+}
+
+router
+    .route('/moodpage')
+    .get(isAuthenticated, async(req,res) => {
         try{
             let moodList = await moodsData.getAllMoods();
             return res.render('./users/moodQuestionnaire', 
@@ -19,8 +27,10 @@ router.route('/moodpage')
             return res.status(500).json({status : 500, error : e});
         }
     });
-router.route('/activitypage')
-    .post(async (req, res) => {
+    
+router
+    .route('/activitypage')
+    .post(isAuthenticated, async (req, res) => {
         const usermood = req.body.usermood; 
 
         try {

@@ -5,6 +5,12 @@ import { users } from '../config/mongoCollections.js';
 import helpers from '../helpers.js';
 import { ObjectId } from 'mongodb';
 
+function isAuthenticated(req, res, next) {
+  if (!req.session.user) {
+      return res.redirect('/login');
+  }
+  next();
+}
 
 router.post('/location', async (req, res) => {
     const { latitude, longitude, activity } = req.body;
@@ -21,7 +27,9 @@ router.post('/location', async (req, res) => {
     }
   });
 
-  router.get('/placepage/:activity', async (req, res) => {
+router
+.route('/placepage/:activity')
+.get(isAuthenticated, async (req, res) => {
     const activity = req.params.activity;
     const userId = req.session.user?._id;
     if (!activity) {
@@ -53,13 +61,9 @@ router.post('/location', async (req, res) => {
 
 router
  .route('/reviewpage')
- .get(async (req, res) => {
+ .get(isAuthenticated, async (req, res) => {
    try {
      const userId = req.session.user?._id;
-     if (!userId) {
-       return res.redirect('/login');
-     }
-
      const usersCollection = await users();
      const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 

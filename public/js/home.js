@@ -15,23 +15,13 @@ if(homeForm){
         const selectedInterests = Array.from(interestsDropdown.selectedOptions).map(option => option.value);
 
         if (selectedInterests.length < 1 || selectedInterests.length > 4) {
-            event.preventDefault(); // Prevent form submission
-            errorContainer.classList.remove("hidden"); // Show error message
+            event.preventDefault(); 
+            errorContainer.classList.remove("hidden"); 
             errorMessage.textContent = "Please select between 1 and 4 interests.";
         } else {
-            errorContainer.classList.add("hidden"); // Hide error message
+            errorContainer.classList.add("hidden"); 
             errorMessage.textContent = "";
         }
-
-        // const bio = userBio.values.trim();
-        // const interests = userInterests.values;
-
-        // if(!interests){
-        //     errorMessage.textContent = 'Interests are required';
-        //     errorContainer.classList.remove('hidden');
-        //     return;
-        // }
-
         
         
     })

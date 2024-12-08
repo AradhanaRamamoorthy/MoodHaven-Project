@@ -12,14 +12,13 @@ location_access.addEventListener('click', (event) => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
-      const response = await fetch('/location', {
+      const response = await fetch('/places/location', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ latitude, longitude, activity: selectedActivity }),
       });
-      
       if (response.ok) {
         window.location.href = `/places/placepage/${encodeURIComponent(selectedActivity)}`;
       } else {

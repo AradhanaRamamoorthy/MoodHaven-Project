@@ -6,7 +6,7 @@ import {users} from '../config/mongoCollections.js';
 import { allInterests } from "../config/mongoCollections.js";
 import { interestData } from '../data/index.js';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 import {ObjectId} from 'mongodb';
 
@@ -84,34 +84,19 @@ router
                 return res.status(401).json({ error: 'Invalid email or password.' });
             }
 
-            if (user.recentVisit === null) {
+            req.session.user = { _id: user._id.toString(), email: user.email };
+            if (user.recentVisit === null || user.interests.length === 0) {
                 await usersCollection.updateOne(
                      { _id: user._id },
-                     { $set: { recentVisit: new Date() } }
+                     { $set: { recentVisit: new Date().toISOString() } }
                 );
-                return res.status(200).redirect('/profileSetup');
+                return res.status(200).json({ redirect: '/profileSetup'});
             }
-            req.session.user = { _id: user._id.toString(), email: user.email };
-                // const interestCollection = await allInterests();
-                // const interests = await interestCollection.find({}).toArray();
-                // const interestNames = interests.map(interest => ({
-                //     interestName: interest.interestName
-                // }));
-
-                // return res.render('./users/home', {
-                //     layout: 'main',
-                //     title: 'Home'
-                //     //interests: interestNames
-                // });
-                //return res.status(200).json({ redirect: '/profile-setup' });
             if (user.searched) {
                 return res.status(200).json({ redirect: '/places/reviewpage' });
             } else {
                 return res.status(200).json({ redirect: '/moods/moodpage' });
             }
-             //Set the session for the successful login:
-        //   req.session.user = { id: user._id, email: user.email };
-        //   return res.status(200).json({ redirect: '/moods/moodpage' });
         } catch (e) {
             res.status(500).json({ error: e });
         }
@@ -140,10 +125,6 @@ router
         try {
             const { bio, interests } = req.body;
             const user = req.session.user;
-            // if (!user) {
-            //     return res.redirect('/login');
-            // }
-
             const usersCollection = await users();
             const updateData = {};
             if (bio) updateData.bio = bio;
@@ -279,7 +260,7 @@ router
                 service: 'gmail',
                 auth: {
                     user: 'moodhaven16@gmail.com',
-                    pass: 'kuhjoufxcbpvbfve'
+                    pass: 'zhscfmibaqshierj'
                 }
             })
 

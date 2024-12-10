@@ -32,9 +32,13 @@ router
                     { $set: { recentVisit: new Date() } }
                 );
                 return res.status(200).redirect('/profileSetup');
+            } 
+            
+            if (user.searched) {
+                return res.status(200).redirect('/places/reviewpage');
             } else {
                 return res.status(200).redirect('/moods/moodpage');
-            }    
+            }
     })
 
 router

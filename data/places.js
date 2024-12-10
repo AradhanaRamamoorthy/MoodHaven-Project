@@ -97,9 +97,32 @@ const getPlacesByActivities = async(activity) => {
     const placeCollection = await places();
     const placesList = await placeCollection.find().toArray();
     const place = placesList.filter(place => place.activity.includes(activity));
-    if(place === null) throw 'No place is present for thi activity!';
+    if(place === null) throw 'No place is present for this activity!';
     return place;
 };
 
-export {createPlaces, getAllPlaces, getCoordinatesofPlaces, getPlaceById, getPlacesByActivities};
+const user_comments = async(placeId, comment) => {
+    placeId = helpers.checkId(placeId);
+    const user_comment = {
+        placeId : placeId,
+        comment_content : comment.comment_content,
+        userName : comment.comment_author,
+        date : comment.date
+    }
+    const placeCollection = await places();
+    const update_comments = await placeCollection.findOneAndUpdate(
+        {_id : ObjectId.createFromHexString(placeId)},
+        { $push: { comment: user_comment } },
+        {returnDocument : 'after'}
+    );
+    return update_comments;
+}
+
+const getCommentsByPlaceId = async (placeId) => {
+    const placeCollection = await places();
+    const place = await placeCollection.findOne({ _id: ObjectId.createFromHexString(placeId)});
+    return place ? place.comment : []; 
+};
+
+export {createPlaces, getAllPlaces, getCoordinatesofPlaces, getPlaceById, getPlacesByActivities, user_comments, getCommentsByPlaceId};
 

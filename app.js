@@ -19,6 +19,7 @@ app.use(express.urlencoded({extended: true}));
 app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.use(session({
+    name: 'MoodHaven',
     secret: 'secret',
     resave: false, 
     saveUninitialized: false,

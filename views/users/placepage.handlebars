@@ -1,4 +1,5 @@
 <h1>Places Suggested</h1>
+
 {{#if hasErrors}}
   <p class="error">{{errors}}</p>
 {{/if}}
@@ -17,6 +18,37 @@
         </p>
         <p class="place-rating"><strong>Rating:</strong> {{#if google_rating}}{{google_rating}}{{else}}Not rated yet{{/if}} / 5</p>
       </div>
+
+      <div class = "comments-tag">
+        <h4>Drop Comments</h4>
+        <div class="comments-details" id = "comments_list_{{_id}}">
+          {{#if comments}}
+            {{#each comments}}
+              <div class = "comment_display_info">
+                <p class = "userName">{{userName}}</p>
+                <small class = "commentTime">{{date}}</small>
+                <p class = "commentContent">{{comment_content}}</p>
+              </div>
+            {{/each}}
+          {{else}}
+            <p>No comments added for the place yet. Drop a comment if you like!</p>
+          {{/if}}
+        {{#if comments}}
+          <button class="view_More_comments" hidden>View More</button>
+        {{/if}}
+        </div>
+       
+        <form class = "comment_Form" data-place-id = "{{_id}}">
+          {{#if user_name}}
+            <p class = "userName">{{user_name}}</p>  <!-- New -->
+          {{/if}}
+          <textarea id = "commentText-{{_id}}" placeholder = "Drop your comment here..." required></textarea>
+          <button type = "submit">Post the Comment</button>
+        </form>
+      </div>
     </div>
   {{/each}}
 </main>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+         <script src="/public/js/user_comments.js"></script>

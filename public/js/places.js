@@ -1,7 +1,10 @@
 const location_access = document.getElementById("nextPageBtn");
+if(location_access)
+{
 const selectedActivityInput = document.getElementById('selectedActivityInput');
-
-location_access.addEventListener('click', (event) => {
+const errorContainer = document.getElementById('error-container');
+const errorMessage = errorContainer.getElementsByClassName('text-goes-here')[0];
+location_access.addEventListener("click", (event) => {
   event.preventDefault();
   const selectedActivity = selectedActivityInput.value;
   if (!selectedActivity) {
@@ -12,6 +15,9 @@ location_access.addEventListener('click', (event) => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
+      console.log(latitude);
+      console.log(longitude);
+      try {
       const response = await fetch('/places/location', {
         method: 'POST',
         headers: {
@@ -19,13 +25,28 @@ location_access.addEventListener('click', (event) => {
         },
         body: JSON.stringify({ latitude, longitude, activity: selectedActivity }),
       });
+      
       if (response.ok) {
-        window.location.href = `/places/placepage/${encodeURIComponent(selectedActivity)}`;
+        const hiddenForm = document.createElement('form');
+        hiddenForm.action = `/places/placepage/${encodeURIComponent(selectedActivity)}`;
+        hiddenForm.method = 'GET';
+        document.body.appendChild(hiddenForm);
+        hiddenForm.submit();
       } else {
-        alert('Failed to fetch places. Please try again.');
+        const errorData = await response.json();
+        errorMessage.textContent = errorData.error || "Failed to fetch the places for the activity selected!";
+        errorContainer.classList.remove('hidden'); 
       }
+     }
+    catch(e)
+    {
+      errorMessage.textContent = "Unable to connect to the server. Please try again!";
+      errorContainer.classList.remove('hidden');
+    }
     });
   } else {
-    alert('Geolocation is not supported by this browser.');
+    errorMessage.textContent = "Geolocation is not supported by this browser.";
+    errorContainer.classList.remove('hidden');
   }
 });
+}

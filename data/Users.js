@@ -58,7 +58,7 @@ let exportedMethods = {
 
     async getUserById (id) {
         const usersCollection = await users(); 
-        const user = await usersCollection.findOne({_id: new ObjectId(id)});
+        const user = await usersCollection.findOne({_id: ObjectId.createFromHexString(id)});
         if (!user) {
           throw `No user found with the given id(${id})`;
         }
@@ -75,7 +75,6 @@ let exportedMethods = {
           );
           if(!update_userLocation) throw 'Could not update location in user!';
           update_userLocation._id = update_userLocation._id.toString();
-          console.log(update_userLocation._id)
           return update_userLocation;
         } catch (error) {
           throw new Error('Failed to update location: ' + error.message);

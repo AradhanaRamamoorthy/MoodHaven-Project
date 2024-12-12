@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", () => {
 let comment_form = document.querySelectorAll(".comment_Form");
 
 function display_Comments(display_Info) {
@@ -37,6 +38,10 @@ function display_Comments(display_Info) {
         }
       });
     }
+
+       document.querySelectorAll('.comments-details').forEach(comment_data => {
+        display_Comments(comment_data);
+    });
 
 comment_form.forEach((commentForm) => {
     commentForm.addEventListener('submit', async(event) => {
@@ -116,7 +121,5 @@ comment_form.forEach((commentForm) => {
         }
     });
 });
-
-document.querySelectorAll('.comments-details').forEach(comment_data => {
-    display_Comments(comment_data);
 });
+

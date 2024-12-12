@@ -78,6 +78,7 @@ font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
     font-size: 1.5em;
     color: #333;
     margin: 0;
+    margin-bottom: 20px;
 }
 
 .comment_display_info.hidden 
@@ -120,6 +121,7 @@ font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
   max-width: 100%;        
   overflow: hidden;       
   text-overflow: ellipsis; 
+  margin-bottom: 15px;
 }
 
 .view_More_comments {

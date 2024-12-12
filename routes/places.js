@@ -61,8 +61,7 @@ router
           }
           for (let place of places) {
             let place_data = await placesData.getCommentsByPlaceId(place._id.toString());
-           //place.comments = place_data || [];
-           place.comments = place_data ? place_data.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+            place.comments = place_data ? place_data.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
         }
         res.render('users/placepage', {
           title : 'Places Page',

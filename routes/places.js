@@ -75,6 +75,49 @@ router
     }
   });
 
+  
+  router.post('/toggleLike', async (req, res) => {
+    const { placeId, liked } = req.body;
+    const usersCollection = await users();
+    const userId = req.session.user?._id;
+
+    console.log("placeId , liked , userId : " , placeId , liked , userId);
+    try {
+    
+      const place = await placesData.getPlaceById(placeId);
+      if (!place) {
+        return res.status(404).json({ success: false, message: 'Place not found' });
+      }
+  
+     
+      if (userId) {
+        const usersCollection = await users();
+  
+        if (liked) {
+         
+          await usersCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $addToSet: { savedPlaces: placeId } } 
+          );
+        } else {
+          
+          await usersCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $pull: { savedPlaces: placeId } } 
+          );
+        }
+      }
+      
+    
+      res.json({ success: true });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
+
+    
+
 
   router.post('/placepage/:place_Id/comments', async(req,res) => {
     let place_Id = req.params.place_Id;

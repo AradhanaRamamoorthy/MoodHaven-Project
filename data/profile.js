@@ -15,7 +15,7 @@ let exportedMethods = {
                 { $set: updateData }
             );
             if (result.modifiedCount === 0) {
-                throw new Error('No data updated, user may not exist or no changes made.');
+                throw 'No data updated, user may not exist or no changes made.';
             }
             return await usersCollection.findOne({ email: email });
         } catch (error) {
@@ -35,7 +35,7 @@ let exportedMethods = {
                 { $set: updateData }
             );
             if (result.modifiedCount === 0) {
-                throw new Error('No data updated, user may not exist or no changes made.');
+                throw 'No data updated, user may not exist or no changes made.';
             }
             return await usersCollection.findOne({ email: email });
         } catch (error) {

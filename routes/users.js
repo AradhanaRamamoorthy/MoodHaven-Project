@@ -10,6 +10,7 @@ import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 import {ObjectId} from 'mongodb';
 import { placesData } from '../data/index.js';
+// import helpers from '../helpers.js';
 // import path from 'path';
 // import multer from 'multer';
 
@@ -30,7 +31,6 @@ import { placesData } from '../data/index.js';
 //     storage,
 //   });
   
-
 function isAuthenticated(req, res, next) {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -51,15 +51,21 @@ router
         }
     })
     .post(async (req, res) =>{
-        const {firstName, lastName, email, password, confirmPassword} = req.body;
+        let {firstName, lastName, email, password, confirmPassword} = req.body;
         try{
             if (!firstName || !lastName || !email || !password || !confirmPassword) {
                 return res.status(400).json({ error: 'All fields are required.' });
             }
+            // firstName = helpers.checkString(firstName, 'firstName');
+            // lastName = helpers.checkString(lastName, 'lastName');
+            // email = helpers.checkString(email, 'email');
+            // password = helpers.checkString(password, 'password');
+            // confirmPassword = helpers.checkString(confirmPassword, 'confirmPassword');
 
             if (password !== confirmPassword) {
                 return res.status(400).json({ error: 'Passwords are not matching.' });
             } 
+
             const usersCollection = await users();
             const existingUser = await usersCollection.findOne({ email: email.trim() });
             
@@ -89,32 +95,33 @@ router
         }
     })
     .post(async (req, res) => {
-        const {email, password} = req.body;
+        let {email, password} = req.body;
         const usersCollection = await users();
         const user = await usersCollection.findOne({ email: email.trim() });
         try {
             if(!email || !password ){
                 return res.status(400).json({ error: 'Both email and password are required.' });
             }
+            // email = helpers.checkString(email, 'email');
+            // password = helpers.checkString(password, 'password');
+
             if (!user) {
-                return res.status(401).json({ error: 'Invalid email or password.' });
+                return res.status(404).json({ error: 'Invalid email or password.' });
             }
 
             const isPasswordValid = await bcrypt.compare(password.trim(), user.password);
             if (!isPasswordValid) {
-                return res.status(401).json({ error: 'Invalid email or password.' });
+                return res.status(404).json({ error: 'Invalid email or password.' });
             }
 
-            // req.session.user = { _id: user._id.toString(), email: user.email };
-            if (user.recentVisit === null ) {
+            req.session.user = { _id: user._id.toString(), email: user.email };
+            if (user.recentVisit === null || user.interests.length === 0) {
                 await usersCollection.updateOne(
                      { _id: user._id },
-                     { $set: { recentVisit: new Date() } }
+                     { $set: { recentVisit: new Date().toISOString() } }
                 );
-                // return res.status(200).json({ redirect: '/profileSetup'});
+                return res.status(200).json({ redirect: '/profileSetup'});
             }
-            req.session.user = { _id: user._id.toString(), email: user.email };
-            
             if (user.searched) {
                 return res.status(200).json({ redirect: '/places/reviewpage' });
             } else {

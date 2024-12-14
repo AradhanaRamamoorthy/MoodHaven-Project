@@ -48,7 +48,7 @@ let exportedMethods = {
         const addUser = await usersCollection.insertOne(newUser);
     
         if (!addUser.acknowledged || !addUser.insertedId) {
-            throw new Error("Couldn't add Google user successfully");
+            throw `Couldn't add Google user successfully`;
         }
     
         const newId = addUser.insertedId.toString();

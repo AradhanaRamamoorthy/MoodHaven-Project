@@ -9,6 +9,27 @@ import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 import {ObjectId} from 'mongodb';
+import { placesData } from '../data/index.js';
+// import path from 'path';
+// import multer from 'multer';
+
+
+
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//       cb(null, "public/images");
+//     },
+//     filename: (req, file, cb) => {
+//       cb(
+//         null,
+//         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+//       );
+//     },
+//   });
+//   const upload = multer({
+//     storage,
+//   });
+  
 
 function isAuthenticated(req, res, next) {
     if (!req.session.user) {
@@ -84,14 +105,16 @@ router
                 return res.status(401).json({ error: 'Invalid email or password.' });
             }
 
-            req.session.user = { _id: user._id.toString(), email: user.email };
-            if (user.recentVisit === null || user.interests.length === 0) {
+            // req.session.user = { _id: user._id.toString(), email: user.email };
+            if (user.recentVisit === null ) {
                 await usersCollection.updateOne(
                      { _id: user._id },
-                     { $set: { recentVisit: new Date().toISOString() } }
+                     { $set: { recentVisit: new Date() } }
                 );
-                return res.status(200).json({ redirect: '/profileSetup'});
+                // return res.status(200).json({ redirect: '/profileSetup'});
             }
+            req.session.user = { _id: user._id.toString(), email: user.email };
+            
             if (user.searched) {
                 return res.status(200).json({ redirect: '/places/reviewpage' });
             } else {
@@ -124,11 +147,18 @@ router
     .post(isAuthenticated, async (req, res) => {
         try {
             const { bio, interests } = req.body;
+            console.log(interests);
             const user = req.session.user;
+
+            if (!user) {
+                return res.redirect('/login');
+            }
+
             const usersCollection = await users();
             const updateData = {};
             if (bio) updateData.bio = bio;
             if (interests) updateData.interests = Array.isArray(interests) ? interests : [interests];
+            console.log(updateData)
             const result = await usersCollection.findOneAndUpdate(
                 { _id: new ObjectId(user._id) },
                 { $set: updateData }
@@ -165,30 +195,86 @@ router
                 lastName: userData.lastName,
                 email: userData.email,
                 bio: userData.bio || 'No bio provided.',
-                interests: userData.interests || [],  
+                interests: userData.interests || [], 
+                profilePic: userData.profilePic || '' 
             });
         } catch (e) {
             res.status(500).json({ error: e });
         }
     })
     .post(isAuthenticated, async (req, res) => {
+        // .post(upload.single('profilePic'), async (req, res) => {
         try {
             const { firstName, lastName, bio, interests } = req.body;
+        
+                // let profilePic = null;
+    
+                // if (req.file) {
+                //     profilePic = `/public/images/${req.file.filename}`;
+                // }
+                // //profilePic = `/public/images/ff1.png`;
+                // console.log("req.file 22 and profilePic: " ,req.file , profilePic);
+    
     
             if (!firstName || !lastName) {
                 throw 'First name and last name are required.';
             }
             const user = req.session.user; 
+            if (!user) {
+
+                return res.redirect('/login'); 
+
+            }
             const selectedInterests = interests ? interests : [];
             const updatedUser = await profileDataFunction.updateUserProfile(
                 user.email,         
                 firstName.trim(),   
                 bio || null,        
                 selectedInterests,     
-                lastName.trim()     
+                lastName.trim(),
+                // profilePic     
             );
             res.redirect('/profile');
         } catch (e) {
+            console.log("error : " , e);
+            const usersCollection = await users();
+            const userId = req.session.user._id;
+            const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+            const savedPlacesIds = userData.savedPlaces || [];
+            let savedPlaces = [];
+            
+            for (let placeId of savedPlacesIds) {
+                try {
+                    const place = await placesData.getPlaceById(placeId);
+                    savedPlaces.push(place);
+                } catch (error) {
+                    console.error(`Error fetching place with ID ${placeId}: ${error}`);
+                }
+            }
+    //         res.redirect('/profile');
+    //      }
+    // });
+
+
+
+    // router
+    // .route('/removeProfilePic')
+    // .post(async (req, res) => {
+    //     try {
+            
+    //         const user = req.session.user; 
+    //         if (!user) {
+    //             return res.redirect('/login'); 
+    //         }
+            
+    //         const updatedUser = await profileDataFunction.removeProfilePic(
+    //             user.email,         
+    //         );
+    //         res.redirect('/profile');
+        // } catch (e) {
+        //     console.log("error : " , e);
+        //     res.redirect('/profile');
+
             res.render('./users/profile', {
                 layout: 'main',  
                 title: 'Profile',  
@@ -196,6 +282,8 @@ router
                 lastName: req.body.lastName,
                 bio: req.body.bio || 'No bio provided.',
                 interests: req.body.interests || [],  
+                savedPlaces: savedPlaces || [],
+                // profilePic: userData.profilePic || ''
             });
         }
     });
@@ -207,6 +295,18 @@ router
             const usersCollection = await users();
             const userId = req.session.user._id;
             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+            const savedPlacesIds = userData.savedPlaces || [];
+            let savedPlaces = [];
+            
+            for (let placeId of savedPlacesIds) {
+                try {
+                    const place = await placesData.getPlaceById(placeId);
+                    savedPlaces.push(place);
+                } catch (error) {
+                    console.error(`Error fetching place with ID ${placeId}: ${error}`);
+                }
+            }
+
             if (!userData) {
                 return res.status(404).send('User not found');
             }
@@ -219,7 +319,8 @@ router
                 email: userData.email,
                 bio: userData.bio || 'No bio provided.',
                 interests: userData.interests || [],
-                profilePic: userData.profilePic? userData.profilePic : 'No Profile Picture uploaded'
+                // profilePic: userData.profilePic? userData.profilePic : 'No Profile Picture uploaded',
+                savedPlaces: savedPlaces || [],
             });
         } catch (error) {
             console.error('Error loading profile:', error);

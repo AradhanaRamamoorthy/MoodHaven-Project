@@ -18,6 +18,7 @@ router
             return res.render('./users/moodQuestionnaire', 
             {
                 layout : 'mainMood',
+                user: req.session.user,
                 title : 'Moods Page',
                 moods : moodList
             });
@@ -62,7 +63,8 @@ router
                 title: 'Interest Page',
                 selectedMood: moodSelected.moodName,
                 interests: associated_Interests,
-                layout: 'mainInterests'
+                layout: 'mainInterests',
+                user: req.session.user
             });
         } catch (e) {
             return res.status(500).render('./users/interests', { 

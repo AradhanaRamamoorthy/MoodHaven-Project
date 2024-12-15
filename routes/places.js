@@ -109,7 +109,8 @@ router
         res.status(200).render('users/placepage', {
           title : 'Places Page',
           places: sortedPlaces.map(place => ({ ...place, user_name })) , 
-          layout : 'places'
+          layout : 'places',
+          user: req.session.user
         });
       
     } 
@@ -158,9 +159,6 @@ router
       res.status(500).json({ success: false, message: 'Server error' });
     }
   });
-
-    
-
 
  router.route('/placepage/:place_Id/comments')
   .post(isAuthenticated, async (req, res) => {
@@ -217,7 +215,7 @@ router
      const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
      if (!user || !user.searchedPlaces) {
-       return res.status(404).render('error', { layout: 'main', title: 'Error', message: 'No searched places found.' });
+       return res.status(404).render('error', { layout: 'main', user: req.session.user, title: 'Error', message: 'No searched places found.' });
      }
 
      res.render('users/review', {
@@ -225,10 +223,11 @@ router
        title: 'Review',
        places: user.searchedPlaces,
        userId: userId, 
+       user: req.session.user
      });
    } catch (error) {
      console.error('Error fetching review page:', error);
-     res.status(500).render('error', { layout: 'main', title: 'Error', message: 'Internal server error.' });
+     res.status(500).render('error', { layout: 'main', user: req.session.user, title: 'Error', message: 'Internal server error.' });
    }
  });
 

@@ -113,6 +113,11 @@ router
                 return res.status(404).json({ error: 'Invalid email or password.' });
             }
 
+            const hashedPassword = await bcrypt.hash(password, 10);
+            console.log('Entered: ', password);
+            console.log('DB: ', user.password);
+            console.log('hashed: ',hashedPassword);
+
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (!isPasswordValid) {
                 return res.status(404).json({ error: 'Invalid email or password.' });
@@ -154,6 +159,7 @@ router
                 layout: 'main',
                 title: 'Complete Your Profile',
                 interestNames,
+                user: req.session.user
             });
         } catch (error) {
             res.status(500).json({ error: e });
@@ -206,6 +212,7 @@ router
                 layout: 'main',
                 title: 'Update Profile',
                 interestNames: interestNames,
+                user: req.session.user,
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
@@ -293,6 +300,8 @@ router
             res.render('./users/profile', {
                 layout: 'main',  
                 title: 'Profile',  
+                user: req.session.user,
+                profile: true,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 bio: req.body.bio || 'No bio provided.',
@@ -329,6 +338,8 @@ router
             res.render('./users/profile', {
                 layout: 'main',
                 title: `${userData.firstName} ${userData.lastName}'s Profile`,
+                user: req.session.user,
+                profile: true,
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
@@ -352,6 +363,7 @@ router
                 layout: 'main',
                 title: 'Forgot password',
                 msg,
+                user: req.session.user,
                 hasResponse: hasResponse === 'true', // Convert string to boolean
             });
         } catch (e) {
@@ -365,6 +377,7 @@ router
         try {
             res.render('./users/reset', {
                 layout: 'main',
+                user: req.session.user,
                 title: 'Forgot password'
             });
         } catch (e) {
@@ -433,6 +446,7 @@ router
             res.status(200).render('./users/reset-password', {
                 title: 'Reset Password',
                 layout: 'main',
+                user: req.session.user,
                 token,
             });
         } catch(e){
@@ -462,7 +476,7 @@ router
                 res.status(400).json({error: 'Invalid or expired token'});
             }
 
-            const hashedPassword = await bcrypt.hash(password, 13);
+            const hashedPassword = await bcrypt.hash(password, 10);
             await usersCollection.updateOne(
                 {_id: new ObjectId(user._id)},
                 {

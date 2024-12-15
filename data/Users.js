@@ -8,9 +8,11 @@ let exportedMethods = {
       firstName = helpers.checkString(firstName, 'firstName');
       lastName = helpers.checkString(lastName, 'lastName');
       email = helpers.checkEmail(email, 'email');
-      password = helpers.checkString('password');
-
-      const hashedPassword = await bcrypt.hash(password, 13);
+      password = helpers.checkString(password, 'password');
+    
+      console.log("addUser: ", password);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      console.log("addUser: ", hashedPassword);
         let newUser = {
             firstName: firstName,
             lastName: lastName,

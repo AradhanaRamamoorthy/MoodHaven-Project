@@ -54,6 +54,27 @@ checkArray(arrValue, varName)
         })
     }
     return arrValue;
+},
+checkObject(objValue, varName)
+{
+    if(!objValue || typeof objValue !== 'object' || Array.isArray(objValue)) throw `The ${varName} should be an Object!`;
+    let commentContentKeys = ["comment_content", "comment_author", "user_Id", "date"]
+    if(Object.keys(objValue).length !== 4) throw 'The Comment Object must have 3 keys';
+    commentContentKeys.forEach((key) => {
+        if(!(key in objValue)) throw 'The Comment Object mush have keys: comment_content, comment_author, user_Id, date';
+        if(key in objValue)
+        {
+            if(key === "comment_content")
+                this.checkString(objValue[key], "comment");
+            if(key === "comment_author")
+                this.checkString(objValue[key], "userName");
+            if(key === "user_Id")
+                this.checkId(objValue[key]);
+            if(key === "date")
+                this.checkString(objValue[key], "date");
+        }
+    });
+    return objValue;
 }
 };
 export default exportedMethods;

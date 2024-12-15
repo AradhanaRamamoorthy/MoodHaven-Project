@@ -23,6 +23,27 @@ checkString (str, name) {
     }
     return str.trim();
 },
+checkgoogleLastname (str, name) {
+    if(!str){
+        throw `Input(${name}) must be provided and should not be a falsy value`;
+    }
+    if (typeof str !== 'string') {
+        throw `Input(${name}) must be strings but got ${typeof str}`;
+    }
+    return str.trim();
+},
+checkEmail (str, name) {
+    if(!str){
+        throw `Input(${name}) must be provided and should not be a falsy value`;
+    }
+    if (typeof str !== 'string') {
+        throw `Input(${name}) must be strings but got ${typeof str}`;
+    }
+    if (str.trim().length === 0){
+        throw `Input(${name}) cannot be an empty string or just spaces`;
+    }
+    return str.trim().toLowerCase();
+},
 checkArray(arrValue, varName)
 {
     if(!arrValue || !Array.isArray(arrValue)) throw `The value of ${varName} should be provided and should be in an Array`;

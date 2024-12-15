@@ -58,7 +58,7 @@ router
             }
             firstName = helpers.checkString(firstName, 'firstName');
             lastName = helpers.checkString(lastName, 'lastName');
-            email = helpers.checkString(email, 'email');
+            email = helpers.checkEmail(email, 'email');
             password = helpers.checkString(password, 'password');
             confirmPassword = helpers.checkString(confirmPassword, 'confirmPassword');
 
@@ -67,7 +67,7 @@ router
             } 
 
             const usersCollection = await users();
-            const existingUser = await usersCollection.findOne({ email: email.trim() });
+            const existingUser = await usersCollection.findOne({ email: email });
             
             if(existingUser){
                 return res.status(400).json({ error: 'User already exists with same email.' });
@@ -96,20 +96,24 @@ router
     })
     .post(async (req, res) => {
         let {email, password} = req.body;
-        const usersCollection = await users();
-        const user = await usersCollection.findOne({ email: email.trim() });
-        try {
+        try{
+            email = helpers.checkEmail(email, 'email');
+            password = helpers.checkString(password, 'password');
+
             if(!email || !password ){
                 return res.status(400).json({ error: 'Both email and password are required.' });
             }
-            email = helpers.checkString(email, 'email');
-            password = helpers.checkString(password, 'password');
-
+        } catch (e) {
+            res.status(500).json({error: e});
+        }
+        const usersCollection = await users();
+        const user = await usersCollection.findOne({ email: email });
+        try {
             if (!user) {
                 return res.status(404).json({ error: 'Invalid email or password.' });
             }
 
-            const isPasswordValid = await bcrypt.compare(password.trim(), user.password);
+            const isPasswordValid = await bcrypt.compare(password, user.password);
             if (!isPasswordValid) {
                 return res.status(404).json({ error: 'Invalid email or password.' });
             }
@@ -120,7 +124,7 @@ router
                     { _id: user._id },
                     { $set: { recentVisit: new Date().toISOString() } }
                 );
-                res.status(200).json({ redirect: '/profileSetup'});
+                return res.status(200).json({ redirect: '/profileSetup'});
             }
             await usersCollection.updateOne(
                 { _id: user._id },
@@ -458,7 +462,7 @@ router
                 res.status(400).json({error: 'Invalid or expired token'});
             }
 
-            const hashedPassword = await bcrypt.hash(password.trim(), 10);
+            const hashedPassword = await bcrypt.hash(password, 13);
             await usersCollection.updateOne(
                 {_id: new ObjectId(user._id)},
                 {

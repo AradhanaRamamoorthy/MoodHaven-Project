@@ -7,14 +7,14 @@ let exportedMethods = {
     async addUser(firstName, lastName, email, password){
       firstName = helpers.checkString(firstName, 'firstName');
       lastName = helpers.checkString(lastName, 'lastName');
-      email = helpers.checkString(email, 'email');
+      email = helpers.checkEmail(email, 'email');
       password = helpers.checkString('password');
 
-      const hashedPassword = await bcrypt.hash(password.trim(), 13);
+      const hashedPassword = await bcrypt.hash(password, 13);
         let newUser = {
-            firstName: firstName.trim(),
-            lastName: lastName.trim(),
-            email: email.trim(),
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
             password: hashedPassword,
             profilePic: "/public/images/default.png",
             bio: "",
@@ -37,14 +37,14 @@ let exportedMethods = {
 
     async addGoogleUser(firstName, lastName, email, profilePic) {
       firstName = helpers.checkString(firstName, 'firstName');
-      lastName = helpers.checkString(lastName, 'lastName');
-      email = helpers.checkString(email, 'email');
+      lastName = helpers.checkgoogleLastname(lastName, 'lastName');
+      email = helpers.checkEmail(email, 'email');
       profilePic = helpers.checkString('password');
 
       let newUser = {     
-            firstName: firstName.trim(),  
-            lastName: lastName?.trim() || '',    
-            email: email.trim(),          
+            firstName: firstName,  
+            lastName: lastName? lastName : '',    
+            email: email,          
             password: null,               
             profilePic: profilePic || "/public/images/default.png",
             bio: "",

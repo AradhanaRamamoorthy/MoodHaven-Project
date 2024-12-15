@@ -4,6 +4,7 @@ import {users, allInterests} from '../config/mongoCollections.js';
 import passport from 'passport';
 const router = Router();
 import {ObjectId} from 'mongodb';
+import helpers from '../helpers.js';
 
 
 router
@@ -24,9 +25,9 @@ router
                 return res.status(400).json({ error: 'User email not found' });
             }
     
-            const email = req.user.email.trim();
-
-            const user = await usersCollection.findOne({ email: email.trim() });
+            let email = req.user.email.trim();
+            email = helpers.checkEmail(email, 'email')
+            const user = await usersCollection.findOne({ email: email });
             if (user.recentVisit === null || user.interests.length === 0) {
                 await usersCollection.updateOne(
                     { _id: user._id },

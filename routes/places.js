@@ -46,36 +46,52 @@ router.post('/location', async (req, res) => {
 router
 .route('/placepage/:activity')
 .get(isAuthenticated, async (req, res) => {
-    const activity = req.params.activity;
+    let activity = req.params.activity;
     const userId = req.session.user._id;
-    if (!activity) {
-      return res.status(400).send('Activity is required.');
+    try
+    {
+      activity = helpers.checkString(activity, "activity");
     }
-    
+    catch(e){
+      return res.status(400).render('users/interests', {
+        title : 'Interest Page',
+        errors: 'Activity is not selected to fetch the relevant places!',
+        hasErrors: true,
+      });
+    }
     try {
+      const places = await placesData.getPlacesByActivities(activity);
+      if(!places || places.length === 0)
+        {
+         return res.status(404).render('users/placepage', {
+           title : 'Place Page',
+           errors: 'No places found for this selected activity!',
+           hasErrors: true,
+         });
+        }
       const userCollection = await users();
       const user = await userCollection.findOne({ _id: new ObjectId(userId) });
       if(!user || !user.temporaryLocation){
         return res.status(404).json({ error: 'User not found.' });
       }
       const {latitude, longitude} = user.temporaryLocation;
-       const places = await placesData.getPlacesByActivities(activity);
+       
         
         await userCollection.updateOne(
-            { _id: new ObjectId(userId) },
+            { _id: ObjectId.createFromHexString(userId) },
             { 
               $set: { searched: true, searchedPlaces: places }, 
-            }
-        );
-        const user_details = await userDataFunctions.getUserById(userId);
-        const user_name = `${user_details.firstName} ${user_details.lastName}`;
-        if(!places || places.length === 0){
-          return res.status(404).render('users/placepage', {
-              title : 'Place Page',
-              errors: 'Place not found!',
-              hasErrors: true,
             });
-          }
+        const user_details = await userDataFunctions.getUserById(userId);
+        if(!user_details)
+        {
+          return res.status(404).render('users/placepage', {
+            title : 'Place Page',
+            errors: 'No user found to view the places!',
+            hasErrors: true,
+          });
+        }
+        const user_name = `${user_details.firstName} ${user_details.lastName}`;
           for (let place of places) {
             let place_data = await placesData.getCommentsByPlaceId(place._id.toString());
             place.comments = place_data ? place_data.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
@@ -90,15 +106,15 @@ router
               }
           );
         }
-        res.render('users/placepage', {
+        res.status(200).render('users/placepage', {
           title : 'Places Page',
-          places: sortedPlaces , 
+          places: sortedPlaces.map(place => ({ ...place, user_name })) , 
           layout : 'places'
         });
       
-    } catch (error) {
-      console.error('Error updating user or fetching places:', error);
-      res.status(500).send('Cannot load the page.');
+    } 
+    catch (e) {
+      res.status(500).json({error : e});
     }
   });
 
@@ -146,28 +162,42 @@ router
     
 
 
-  router.post('/placepage/:place_Id/comments', async(req,res) => {
+ router.route('/placepage/:place_Id/comments')
+  .post(isAuthenticated, async (req, res) => {
     let place_Id = req.params.place_Id;
     let { comment_Text, user_name } = req.body; 
-    comment_Text = comment_Text.trim();
-    user_name = user_name.trim();
-    if (!comment_Text || typeof comment_Text !== 'string' || comment_Text.length === 0 || !user_name || typeof user_name !== 'string' || user_name.length === 0) {
-      return res.status(400).send('Comment text and user name are required.');
-    }
-
+    const userId = req.session.user._id;
     try
     {
       place_Id = helpers.checkId(place_Id);
       comment_Text = helpers.checkString(comment_Text, "user_comment");
+      user_name = helpers.checkString(user_name, "userName");
+    }
+    catch(e)
+    {
+      return res.status(400).render('users/placepage', {
+        title : 'Place Page',
+        errors: e,
+        hasErrors: true,
+      });
+    }
+    try
+    {
       const place = await placesData.getPlaceById(place_Id);
       if(!place)
       {
-        return res.status(404).json({error : "Place not found!"});
+        return res.status(404).render('users/placepage', { 
+          title: 'Place Page',
+          status: 404, 
+          error: "No place found for the placeId!" ,
+          hasErrors: true
+        });
       }
       const comment_added = {
         comment_content: comment_Text,
         comment_author: user_name,
-        date: new Date().toISOString()
+        user_Id: userId,
+        date: new Date().toLocaleString()
       };
       const updated_place = await placesData.user_comments(place_Id, comment_added);
       res.status(200).json(updated_place.comment);

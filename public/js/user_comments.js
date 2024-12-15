@@ -1,7 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let place_ids = document.querySelectorAll(".place-id");
     let comment_form = document.querySelectorAll(".comment_Form");
+    const errorContainer = document.getElementById('error-container');
+    const errorMessage = errorContainer.getElementsByClassName('text-goes-here')[0];
+    errorContainer.classList.add('hidden');
 
     function display_Comments(display_Info) {
+    try
+    {
         const comments = display_Info.querySelectorAll('.comment_display_info');
         const view_More_comment = display_Info.querySelector('.view_More_comments');
 
@@ -22,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             expanded_comments_display.addEventListener("click", () => {
+            try{
                 const isViewLess = expanded_comments_display.classList.contains("view_less");
 
                 if (isViewLess) {
@@ -37,7 +44,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     expanded_comments_display.textContent = "View Less";
                     expanded_comments_display.classList.add("view_less");
                 }
+            }
+            catch(e)
+            {
+                errorMessage.textContent = "There is an issue in toggling the comment! Please try again!";
+                errorContainer.classList.remove('hidden');
+            }
             });
+        }
+    }
+    catch(e)
+        {
+            errorMessage.textContent = "Error in fetching the comments!";
+            errorContainer.classList.remove('hidden');
         }
     }
 
@@ -52,9 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
             let comment_Text = document.getElementById(`commentText-${place_Id}`).value;
             comment_Text = comment_Text.trim();
             
-            if (!comment_Text) {
-                alert("Comments cannot be empty");
-                return;
+            if (!comment_Text || typeof comment_Text !== 'string' || comment_Text.length === 0) {
+                errorMessage.textContent = "Comments cannot be empty value!";
+                errorContainer.classList.remove('hidden');
             }
 
             let userNameElement = commentForm.querySelector(".userName");
@@ -80,6 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 comments_updated.forEach((comment) => {
                     let comment_display_Info = document.createElement("div");
                     comment_display_Info.classList.add("comment_display_info");
+                    let date_value  = comment.date;
+                    let [datePart, timePart] = date_value.split(", ");
+                    let [day, month, year] = datePart.split("/");
+                    let formattedDate = `${year}-${month}-${day}T${timePart}`
 
                     let userName_commented = document.createElement("p");
                     userName_commented.classList.add('userName');
@@ -88,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     comment_display_Info.appendChild(userName_commented);
 
                     let Date_commented = document.createElement('small');
-                    let commentDate = new Date(comment.date);
+                    let commentDate = new Date(formattedDate);
                     Date_commented.textContent = commentDate.toLocaleString();
                     Date_commented.classList.add("commentTime");
                     comment_display_Info.appendChild(Date_commented);

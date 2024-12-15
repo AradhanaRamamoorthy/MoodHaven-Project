@@ -4,6 +4,7 @@ if(location_access)
 const selectedActivityInput = document.getElementById('selectedActivityInput');
 const errorContainer = document.getElementById('error-container');
 const errorMessage = errorContainer.getElementsByClassName('text-goes-here')[0];
+errorContainer.classList.add('hidden');
 location_access.addEventListener("click", (event) => {
   event.preventDefault();
   const selectedActivity = selectedActivityInput.value;
@@ -31,8 +32,7 @@ location_access.addEventListener("click", (event) => {
         document.body.appendChild(hiddenForm);
         hiddenForm.submit();
       } else {
-        const errorData = await response.json();
-        errorMessage.textContent = errorData.error || "Failed to fetch the places for the activity selected!";
+        errorMessage.textContent = "Failed to fetch the places for the activity selected!";
         errorContainer.classList.remove('hidden'); 
       }
      }

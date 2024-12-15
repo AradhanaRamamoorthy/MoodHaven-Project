@@ -7,7 +7,7 @@
   {{#each places}}
     <div class="place-container">
       <div class="place-icon">
-        <img src="{{#if icon_photo}}{{icon_photo}}{{else}}/path/to/default/image.jpg{{/if}}" alt="Place Icon" class="place-image" />
+        <img src="{{#if icon_photo}}{{icon_photo}}{{else}}/public/images/no_image_available.jpeg{{/if}}" alt="Place Icon" class="place-image" />
       </div>
       <div class="place-details">
         <h3 class="place-name">
@@ -38,6 +38,10 @@
             <p>No comments added for the place yet. Drop a comment if you like!</p>
           {{/if}}
         
+        </div>
+
+         <div class = "placepage hidden" id = "error-container">
+        <div class = "alert alert-danger text-goes-here"></div>
         </div>
        
         <form class = "comment_Form" data-place-id = "{{_id}}">

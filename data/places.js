@@ -92,7 +92,7 @@ const getPlaceById = async (id) => {
 };
 
 const getPlacesByActivities = async(activity) => {
-    activity = helpers.checkString(activity);
+    activity = helpers.checkString(activity, "selectedactivity");
     const placeCollection = await places();
     const placesList = await placeCollection.find().toArray();
     const place = placesList.filter(place => place.activity.includes(activity));
@@ -102,10 +102,12 @@ const getPlacesByActivities = async(activity) => {
 
 const user_comments = async(placeId, comment) => {
     placeId = helpers.checkId(placeId);
+    comment = helpers.checkObject(comment, "comment");
     const user_comment = {
         placeId : placeId,
         comment_content : comment.comment_content,
         userName : comment.comment_author,
+        userId : comment.user_Id,
         date : comment.date
     }
     const placeCollection = await places();
@@ -114,12 +116,15 @@ const user_comments = async(placeId, comment) => {
         { $push: { comment: user_comment } },
         {returnDocument : 'after'}
     );
+     if(!update_comments) throw "Could not update the comment successfully!";
     return update_comments;
 }
 
 const getCommentsByPlaceId = async (placeId) => {
+    placeId = helpers.checkId(placeId);
     const placeCollection = await places();
     const place = await placeCollection.findOne({ _id: ObjectId.createFromHexString(placeId)});
+    if(!place) throw "No place can be fetched to get the comments data";
     return place ? place.comment : []; 
 };
 

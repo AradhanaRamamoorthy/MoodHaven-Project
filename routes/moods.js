@@ -31,32 +31,41 @@ router
 router
     .route('/activitypage')
     .post(isAuthenticated, async (req, res) => {
-        const usermood = req.body.usermood; 
+        let usermood = req.body.usermood; 
+        try 
+        {
+            usermood = helpers.checkString(usermood, "selectedmood");
+        }
+        catch(e)
+        {
+            return res.status(400).render('./users/moodQuestionnaire', { 
+                status: 400, 
+                errors: "No mood is selected to fetch the interest!",
+                hasErrors: true 
+            }); 
+        }
 
-        try {
-            if (!usermood) {
-                return res.status(400).render('errorPage', { 
-                    status: 400, 
-                    error: "No mood is selected" 
-                }); 
-            }
-
+        try 
+        {
             const moodSelected = await moodsData.getMoodByName(usermood);
             if (!moodSelected) {
-                return res.status(404).render('errorPage', { 
+                return res.status(404).render('./users/moodQuestionnaire', { 
+                    title: 'Moods Page',
                     status: 404, 
-                    error: "Mood not found" 
+                    error: "Mood not found!" ,
+                    hasErrors: true
                 });
             }
 
             const associated_Interests = moodSelected.interest;
             return res.status(200).render('./users/interests', {
+                title: 'Interest Page',
                 selectedMood: moodSelected.moodName,
                 interests: associated_Interests,
                 layout: 'mainInterests'
             });
         } catch (e) {
-            return res.status(500).render('errorPage', { 
+            return res.status(500).render('./users/interests', { 
                 status: 500, 
                 error: "Internal Server Error. Please try again later." 
             });

@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     interestSelect.addEventListener("change", function() {
         selectedInterest = this.value;
+        activitySelect.innerHTML = `<option value="" disabled selected>Choose an activity</option>`;
+        activitiesContainer.classList.add("hidden");
     });
 
     getActivitiesBtn.addEventListener("click", function() {
@@ -65,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function showError(message) {
-        errorMessage.textContent = message;
+        errorMessage.textContent = message || "An unexpected error occurred.";
         errorContainer.classList.remove("hidden");
     }
 });

@@ -4,6 +4,9 @@ const router = Router();
 
 router.get('/:interest/activities', async (req, res) => {
     const interestName = req.params.interest;
+    if (!interestName || typeof interestName !== 'string' || !/^[a-zA-Z\s]+$/.test(interestName)) {
+        return res.status(400).json({ error: 'Invalid interest parameter. Please provide a valid interest name.' });
+    }
     try {
         const activities = await interestData.getActivitiesByInterest(interestName);
         if (activities.length > 0) {

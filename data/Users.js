@@ -1,10 +1,16 @@
 import {users} from '../config/mongoCollections.js';
 import {ObjectId} from 'mongodb';
 import bcrypt from 'bcryptjs';
+import helpers from '../helpers.js';
 
 let exportedMethods = {
     async addUser(firstName, lastName, email, password){
-        const hashedPassword = await bcrypt.hash(password.trim(), 13);
+      firstName = helpers.checkString(firstName, 'firstName');
+      lastName = helpers.checkString(lastName, 'lastName');
+      email = helpers.checkString(email, 'email');
+      password = helpers.checkString('password');
+
+      const hashedPassword = await bcrypt.hash(password.trim(), 13);
         let newUser = {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
@@ -30,7 +36,12 @@ let exportedMethods = {
     },
 
     async addGoogleUser(firstName, lastName, email, profilePic) {
-        let newUser = {     
+      firstName = helpers.checkString(firstName, 'firstName');
+      lastName = helpers.checkString(lastName, 'lastName');
+      email = helpers.checkString(email, 'email');
+      profilePic = helpers.checkString('password');
+
+      let newUser = {     
             firstName: firstName.trim(),  
             lastName: lastName?.trim() || '',    
             email: email.trim(),          
@@ -57,6 +68,7 @@ let exportedMethods = {
     }   ,
 
     async getUserById (id) {
+        id = helpers.checkId(id, 'id');
         const usersCollection = await users(); 
         const user = await usersCollection.findOne({_id: ObjectId.createFromHexString(id)});
         if (!user) {

@@ -11,13 +11,17 @@ checkId(id)
     if(!ObjectId.isValid(id)) throw 'The id provided is not a valid ObjectId';
     return id;
 },
-checkString(strValue, varName)
-{
-    if(!strValue) throw `The ${varName} of the mood should be provided`;
-    if(typeof strValue !== 'string') throw `The ${varName} of the mood should be of string datatype`;
-    strValue = strValue.trim();
-    if(strValue.length === 0) throw `The ${varName} cannot be an empty string`;
-    return strValue;
+checkString (str, name) {
+    if(!str){
+        throw `Input(${name}) must be provided and should not be a falsy value`;
+    }
+    if (typeof str !== 'string') {
+        throw `Input(${name}) must be strings but got ${typeof str}`;
+    }
+    if (str.trim().length === 0){
+        throw `Input(${name}) cannot be an empty string or just spaces`;
+    }
+    return str.trim();
 },
 checkArray(arrValue, varName)
 {

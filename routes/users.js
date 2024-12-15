@@ -10,7 +10,7 @@ import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 import {ObjectId} from 'mongodb';
 import { placesData } from '../data/index.js';
-// import helpers from '../helpers.js';
+import helpers from '../helpers.js';
 // import path from 'path';
 // import multer from 'multer';
 
@@ -56,11 +56,11 @@ router
             if (!firstName || !lastName || !email || !password || !confirmPassword) {
                 return res.status(400).json({ error: 'All fields are required.' });
             }
-            // firstName = helpers.checkString(firstName, 'firstName');
-            // lastName = helpers.checkString(lastName, 'lastName');
-            // email = helpers.checkString(email, 'email');
-            // password = helpers.checkString(password, 'password');
-            // confirmPassword = helpers.checkString(confirmPassword, 'confirmPassword');
+            firstName = helpers.checkString(firstName, 'firstName');
+            lastName = helpers.checkString(lastName, 'lastName');
+            email = helpers.checkString(email, 'email');
+            password = helpers.checkString(password, 'password');
+            confirmPassword = helpers.checkString(confirmPassword, 'confirmPassword');
 
             if (password !== confirmPassword) {
                 return res.status(400).json({ error: 'Passwords are not matching.' });
@@ -102,8 +102,8 @@ router
             if(!email || !password ){
                 return res.status(400).json({ error: 'Both email and password are required.' });
             }
-            // email = helpers.checkString(email, 'email');
-            // password = helpers.checkString(password, 'password');
+            email = helpers.checkString(email, 'email');
+            password = helpers.checkString(password, 'password');
 
             if (!user) {
                 return res.status(404).json({ error: 'Invalid email or password.' });
@@ -117,11 +117,15 @@ router
             req.session.user = { _id: user._id.toString(), email: user.email };
             if (user.recentVisit === null || user.interests.length === 0) {
                 await usersCollection.updateOne(
-                     { _id: user._id },
-                     { $set: { recentVisit: new Date().toISOString() } }
+                    { _id: user._id },
+                    { $set: { recentVisit: new Date().toISOString() } }
                 );
-                return res.status(200).json({ redirect: '/profileSetup'});
+                res.status(200).json({ redirect: '/profileSetup'});
             }
+            await usersCollection.updateOne(
+                { _id: user._id },
+                { $set: { recentVisit: new Date().toISOString() } }
+            );
             if (user.searched) {
                 return res.status(200).json({ redirect: '/places/reviewpage' });
             } else {
@@ -335,6 +339,22 @@ router
         }
     });
 
+router
+    .route('/response')
+    .post(async (req, res) => {
+        const { msg, hasResponse } = req.body;
+        try {
+            res.render('./users/response', {
+                layout: 'main',
+                title: 'Forgot password',
+                msg,
+                hasResponse: hasResponse === 'true', // Convert string to boolean
+            });
+        } catch (e) {
+            res.status(500).json({ error: e });
+        }
+    });
+
 router  
     .route('/reset')
     .get(async (req, res) => {
@@ -342,19 +362,20 @@ router
             res.render('./users/reset', {
                 layout: 'main',
                 title: 'Forgot password'
-                });
+            });
         } catch (e) {
             res.status(500).json({error: e});
         }
     })
     .post(async (req, res) => {
-        const {email} = req.body;
-        const usersCollection = await users();
-        const user = await usersCollection.findOne({ email: email.trim() });
+        let {email} = req.body;
         const resetToken = crypto.randomBytes(32).toString('hex');
         const resetTokenExpiry = Date.now() + 30 * 60 * 1000;
 
         try{
+            email = helpers.checkString(email, 'email');
+            const usersCollection = await users();
+            const user = await usersCollection.findOne({ email: email.trim() });
             if(!user){
                 res.status(404).json({error: 'User not found'});
             }
@@ -380,10 +401,10 @@ router
                 text: `Please click on the link to reset your password: ${resetLink}. The link expires in 30 minutes`
             };
             await transporter.sendMail(mailOptions);
-            res.render('./users/response', {
-                layout: 'main',
-                title: 'Forgot password',
-                msg: 'Password reset link sent successfully to your email'
+            res.status(200).json({ redirect: '/response',
+                data: {
+                    msg: 'Password reset link sent successfully to your email',
+                }
             });
         } catch (e){
             res.status(500).json({error: e});
@@ -405,28 +426,29 @@ router
                 res.status(400).json({error: 'Invalid or expired token'});
             }
 
-            res.render('./users/reset-password', {
+            res.status(200).render('./users/reset-password', {
                 title: 'Reset Password',
-                layout: 'main', 
-                token
-            })
+                layout: 'main',
+                token,
+            });
         } catch(e){
             res.status(500).json({error: e});
         }
     })
     .post(async (req, res) => {
-        const {token, password, confirmPassword} = req.body;
+        let {token, password, confirmPassword} = req.body;
         const usersCollection = await users();
         try{
+            password = helpers.checkString(password, 'password');
+            confirmPassword = helpers.checkString(confirmPassword, 'confirmPassword');
             if (password !== confirmPassword) {
-                res.render('./users/reset-password', {
-                    layout: 'main',
-                    title: 'Reset Password',
-                    hasError: true,
-                    error: "Passwords don't match"
-                });
+                return res.status(400).json({ error: 'Passwords are not matching' });
             }
+        } catch (e){
+            res.status(500).json({error: e});
+        } 
 
+        try{
             const user = await usersCollection.findOne({
                 resetToken: token,
                 resetTokenExpiry: { $gt: Date.now() },
@@ -444,12 +466,12 @@ router
                     $unset: { resetToken: "", resetTokenExpiry: "" },
                 }
             );
-            res.status(200).render('./users/response', {
-                layout: 'main',
-                title: 'Reset Password',
-                hasResponse: true,
-                msg: 'Password reset successfully'
-            })
+            res.status(200).json({ redirect: '/response',
+                data: {
+                    msg: 'Password reset successful',
+                    hasResponse: true,
+                }
+             });
         } catch(e){
             res.status(500).json({error: e});
         }

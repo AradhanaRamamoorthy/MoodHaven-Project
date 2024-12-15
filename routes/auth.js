@@ -3,6 +3,7 @@ import userDataFunctions from '../data/Users.js';
 import {users, allInterests} from '../config/mongoCollections.js';
 import passport from 'passport';
 const router = Router();
+import {ObjectId} from 'mongodb';
 
 
 router
@@ -26,14 +27,17 @@ router
             const email = req.user.email.trim();
 
             const user = await usersCollection.findOne({ email: email.trim() });
-            if (!user.recentVisit) {
+            if (user.recentVisit === null || user.interests.length === 0) {
                 await usersCollection.updateOne(
                     { _id: user._id },
-                    { $set: { recentVisit: new Date() } }
+                    { $set: { recentVisit: new Date().toISOString() } }
                 );
                 return res.status(200).redirect('/profileSetup');
-            } 
-            
+            }
+            await usersCollection.updateOne(
+                { _id: user._id },
+                { $set: { recentVisit: new Date().toISOString() } }
+            );
             if (user.searched) {
                 return res.status(200).redirect('/places/reviewpage');
             } else {

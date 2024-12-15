@@ -6,6 +6,17 @@ if (loginForm) {
     const errorContainer = document.getElementById('error-container');
     const errorMessage = errorContainer.querySelector('.text-goes-here');
 
+    const togglePasswordButton = document.getElementById('togglePassword');
+    const toggleIcon = togglePasswordButton.querySelector('i');
+
+    togglePasswordButton.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+
+        toggleIcon.classList.toggle('fa-eye');
+        toggleIcon.classList.toggle('fa-eye-slash');
+    });
+    
     errorContainer.classList.add('hidden');
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault(); 

@@ -9,6 +9,27 @@ if (signupForm){
     const errorContainer = document.getElementById('error-container');
     const errorMessage = errorContainer.querySelector('.text-goes-here');
 
+    const togglePasswordButton = document.getElementById('togglePassword');
+    const toggleConfirmPasswordButton = document.getElementById('toggleConfirmPassword');
+    const togglePasswordIcon = togglePasswordButton.querySelector('i');
+    const toggleConfirmPasswordIcon = toggleConfirmPasswordButton.querySelector('i');
+
+    togglePasswordButton.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+
+        togglePasswordIcon.classList.toggle('fa-eye');
+        togglePasswordIcon.classList.toggle('fa-eye-slash');
+    });
+
+    toggleConfirmPasswordButton.addEventListener('click', () => {
+        const isConfirmPassword = confirmPasswordInput.getAttribute('type') === 'password';
+        confirmPasswordInput.setAttribute('type', isConfirmPassword ? 'text' : 'password');
+
+        toggleConfirmPasswordIcon.classList.toggle('fa-eye');
+        toggleConfirmPasswordIcon.classList.toggle('fa-eye-slash');
+    });
+    
     errorContainer.classList.add('hidden');
     signupForm.addEventListener('submit', async (event) => {
         event.preventDefault(); 
@@ -39,7 +60,6 @@ if (signupForm){
             });
             if (response.ok) {
                 const result = await response.json();
-                console.log('here')
                 if (result.redirect) {
                     const hiddenForm = document.createElement('form');
                     hiddenForm.action = result.redirect;

@@ -14,24 +14,34 @@ function isAuthenticated(req, res, next) {
 }
 
 router.post('/location', async (req, res) => {
-    const { latitude, longitude, activity } = req.body;
-    const userId = req.session.user?._id;
-    if (!userId) {
-      res.status(400).json({ error: 'UserId is not found' });
+  const { latitude, longitude, activity } = req.body;
+  const userId = req.session.user?._id;
+  try{
+    if(!userId){
+      return res.status(400).redirect('/');
     }
-    if(!latitude || !longitude) {
+    if(!latitude || !longitude){
       res.status(400).json({ error: 'Invalid location data.' });
     }
-    if(!activity) {
+    if(!activity){
       res.status(400).json({ error: 'Activity is required.' });
     }
-    try {
-      const update_User_location = await userDataFunctions.updateUserLocation(userId, latitude, longitude);
-      res.status(200).json({ message: 'Location and activity received successfully' });
-    } catch (e) {
-      res.status(500).json({ error: e });
+
+    const userCollection = await users();
+    const updateUser = await userCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $set: { temporaryLocation: { latitude, longitude}}}
+    )
+    if (updateUser.matchedCount === 0) {
+      console.log('No user found with the given ID.');
+      return res.status(404).json({ error: 'User not found.' });
     }
-  });
+
+    res.status(200).json({ message: 'Location updated successfully.'})
+  } catch(e){
+    res.status(500).json({ error: e });
+  }
+});
 
 router
 .route('/placepage/:activity')
@@ -41,9 +51,16 @@ router
     if (!activity) {
       return res.status(400).send('Activity is required.');
     }
+    
     try {
+      const userCollection = await users();
+      const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+      if(!user || !user.temporaryLocation){
+        return res.status(404).json({ error: 'User not found.' });
+      }
+      const {latitude, longitude} = user.temporaryLocation;
        const places = await placesData.getPlacesByActivities(activity);
-        const userCollection = await users();
+        
         await userCollection.updateOne(
             { _id: new ObjectId(userId) },
             { 
@@ -63,9 +80,19 @@ router
             let place_data = await placesData.getCommentsByPlaceId(place._id.toString());
             place.comments = place_data ? place_data.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
         }
+        const sortedPlaces = await placesData.sortPlaces(places, latitude, longitude);
+        if (userId) {
+          const userCollection = await users();
+          await userCollection.updateOne(
+              { _id: new ObjectId(userId) },
+              { 
+                $set: { searched: true, searchedPlaces: places }, 
+              }
+          );
+        }
         res.render('users/placepage', {
           title : 'Places Page',
-          places: places.map(place => ({ ...place, user_name })) , 
+          places: sortedPlaces , 
           layout : 'places'
         });
       

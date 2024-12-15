@@ -6,8 +6,6 @@ dotenv.config({path: '../config/config.env'})
 
 import axios from 'axios';
 
-const API_KEY = process.env.API_KEY;
-
 const createPlaces = async(placeName, activity) => {
     placeName = helpers.checkString(placeName, 'placeName');
     activity = helpers.checkArray(activity, "activity");
@@ -23,6 +21,7 @@ const createPlaces = async(placeName, activity) => {
 }
 
 const getCoordinatesofPlaces = async(placeId) => {
+    const API_KEY = process.env.API_KEY;
     const get_places = await getPlaceById(placeId);
     const city = "Hoboken";
     const state = "New Jersey";
@@ -124,5 +123,45 @@ const getCommentsByPlaceId = async (placeId) => {
     return place ? place.comment : []; 
 };
 
-export {createPlaces, getAllPlaces, getCoordinatesofPlaces, getPlaceById, getPlacesByActivities, user_comments, getCommentsByPlaceId};
+const sortPlaces = async(places, latitude, longitude) => {
+    const API_KEY = process.env.API_KEY;
+    const destinations = places.map((place) => `${place.location_Coordinates.latitude},${place.location_Coordinates.longitude}`).join('|');
+      const googleResponse = await axios.get(
+          `https://maps.googleapis.com/maps/api/distancematrix/json`,
+          {
+            params: {
+              origins: `${latitude},${longitude}`,
+              destinations,
+              key: API_KEY,
+            },
+          }
+        );
+        const distances = googleResponse.data.rows[0].elements;
+        const sortedPlaces = places
+          .map((place, index) => ({
+            ...place,
+            distance: distances[index]?.distance?.value || Infinity, 
+          }))
+          .sort((a, b) => {
+            if (a.distance <= 5000 && b.distance <= 5000) {
+              if (b.google_rating !== a.google_rating) {
+                return b.google_rating - a.google_rating;
+              }
+              return a.distance - b.distance; 
+            }
+        
+            if (a.distance > 5000 && b.distance > 5000) {
+              if (a.distance !== b.distance) {
+                return a.distance - b.distance; 
+              }
+              return b.google_rating - a.google_rating; 
+            }
+        
+            return a.distance - b.distance;
+          });
+          
+        return sortedPlaces;
+};
+
+export {createPlaces, getAllPlaces, getCoordinatesofPlaces, getPlaceById, getPlacesByActivities, user_comments, getCommentsByPlaceId, sortPlaces};
 

@@ -64,22 +64,7 @@ let exportedMethods = {
         }
         user._id = user._id.toString();
         return user;
-    },
-
-    async updateUserLocation(userId, latitude, longitude){
-        const usersCollection = await users();
-        try {
-          const update_userLocation = await usersCollection.findOneAndUpdate(
-            { _id: ObjectId.createFromHexString(userId) },
-            { $set: { location: { latitude, longitude } } }
-          );
-          if(!update_userLocation) throw 'Could not update location in user!';
-          update_userLocation._id = update_userLocation._id.toString();
-          return update_userLocation;
-        } catch (error) {
-          throw new Error('Failed to update location: ' + error.message);
-        }
-      }
+    }
 }
 
 export default exportedMethods;

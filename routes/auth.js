@@ -43,9 +43,15 @@ router
 
 router
     .route('/logout')
-    .get((req, res, next) => {
-        req.logout((err) => {
+    .get(async (req, res, next) => {
+        const user = req.session.user;
+        req.logout(async (err) => {
             if (err) { return next(err); }
+            const usersCollection = await users();
+            await usersCollection.updateOne(
+                {_id: new ObjectId(user._id)},
+                { $unset: { temporaryLocation: {} } }
+            );
             res.redirect('/')
         })
     })

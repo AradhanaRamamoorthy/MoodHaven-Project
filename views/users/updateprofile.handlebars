@@ -60,6 +60,9 @@ header {
 }
 </style>
 <div class="profile">
+    <div class = "interestForm hidden" id = "error-container">
+            <div class = "alert alert-danger text-goes-here"></div>
+        </div>
     <header>
         <h3>{{firstName}} {{lastName}}'s Profile</h3>
 
@@ -110,6 +113,9 @@ header {
         <input type="file" id="profilePic" name="profilePic" accept="image/*">
         
         <button type="submit">Save Changes</button>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+         <script src="/public/js/profile.js"></script> 
     </form>
 
     
@@ -117,23 +123,3 @@ header {
     <a href="/profile">Cancel</a>
 </main>
 </div>
-
-
- <script>
-  document.getElementById('interestForm').addEventListener('submit', function(event) {
-    const checkboxes = document.querySelectorAll('.interest-checkbox');
-    const selectedInterests = Array.from(checkboxes).filter(checkbox => checkbox.checked);
-    console.log("SELECTEDDDDD", selectedInterests)
-    if (selectedInterests.length === 0) {
-      alert('Please select at least one interest.');
-      event.preventDefault();
-      return;
-    }
-    
-    if (selectedInterests.length > 5) {
-      alert('You can select no more than 5 interests.');
-      event.preventDefault();
-      return;
-    }
-  });
-</script>

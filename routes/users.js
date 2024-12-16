@@ -297,8 +297,6 @@ router
 //         }
 //     });
 
-
-
 router
     .route('/updateProfile')
     .get(isAuthenticated, async (req, res) => {
@@ -368,38 +366,11 @@ router
                 lastName.trim(),
                 profilePic     
             );
-            res.redirect('/profile');
+            res.status(200).json({ redirect: '/profile' });
         } catch (e) {
-            console.log("error : " , e);
-            const usersCollection = await users();
-            const userId = req.session.user._id;
-            const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
-            const savedPlacesIds = userData.savedPlaces || [];
-            let savedPlaces = [];
-            
-            for (let placeId of savedPlacesIds) {
-                try {
-                    const place = await placesData.getPlaceById(placeId);
-                    savedPlaces.push(place);
-                } catch (error) {
-                    console.error(`Error fetching place with ID ${placeId}: ${error}`);
-                }
-            }
-            res.render('./users/profile', {
-                layout: 'main',  
-                title: 'Profile',  
-                user: req.session.user,
-                profile: true,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                bio: req.body.bio || '',
-                interests: req.body.interests || [],  
-                savedPlaces: savedPlaces || [],
-                profilePic: userData.profilePic
-            });
+            res.status(500).json({ error: e });
         }
     });
-
 
 router
     .route("/deleteProfilePic")

@@ -151,7 +151,20 @@ textarea {
 }
 
 .userName {
-  font-size: 0.9em;  
+  font-size: 1em;  
   color: #9fa9a9;    
   margin-bottom: 2px; 
+}
+
+
+.user-details {
+  display: flex;
+  align-items: center; 
+  gap: 10px; 
+}
+
+.user-profile-pic {
+  width: 30px; 
+  height: 30px;
+  border-radius: 50%;
 }

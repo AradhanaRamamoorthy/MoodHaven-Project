@@ -75,7 +75,7 @@ header {
         </div>
     </header>    
 <main>
-    <form action="/updateProfile" method="POST"  enctype="multipart/form-data">
+    <form action="/updateProfile" method="POST"  enctype="multipart/form-data" id="interestForm">
         <label for="firstName">First Name:</label>
         <input type="text" id="firstName" name="firstName" value="{{firstName}}" required>
 
@@ -87,10 +87,15 @@ header {
 
         <label for="interests">Select Interests (at least 5 required):</label>
         <div>Current selected interests : {{interests}}</div>
+
         <div id="interests">
-            {{#each interestNames}}
-            <label><input type="checkbox" name="interests" value={{this.interestName}} {% if {{interests}}.includes({{this.interestName}}) %}checked{% endif %}> {{this.interestName}}</label>
-            {{/each}}
+           {{#each interestNames}}
+<label>
+    <input class="interest-checkbox" type="checkbox" name="interests" value="{{this.interestName}}" {{#if this.checked}}checked{{/if}}>
+    {{this.interestName}}
+</label>
+{{/each}}
+            
         </div>
 
         {{!-- {{#if profilePic}}
@@ -113,3 +118,22 @@ header {
 </main>
 </div>
 
+
+ <script>
+  document.getElementById('interestForm').addEventListener('submit', function(event) {
+    const checkboxes = document.querySelectorAll('.interest-checkbox');
+    const selectedInterests = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+    console.log("SELECTEDDDDD", selectedInterests)
+    if (selectedInterests.length === 0) {
+      alert('Please select at least one interest.');
+      event.preventDefault();
+      return;
+    }
+    
+    if (selectedInterests.length > 5) {
+      alert('You can select no more than 5 interests.');
+      event.preventDefault();
+      return;
+    }
+  });
+</script>

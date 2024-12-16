@@ -196,6 +196,109 @@ router
         }
     });
 
+// router
+//     .route('/updateProfile')
+//     .get(isAuthenticated, async (req, res) => {
+//         try {
+//             const usersCollection = await users();
+//             const userId = req.session.user._id;
+//             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+//             const interestCollection = await allInterests();
+//             const interests = await interestCollection.find({}).toArray();
+//             const interestNames = interests.map(interest => ({
+//                 interestName: interest.interestName 
+//             }));
+
+//             res.render('./users/updateprofile', {
+//                 layout: 'main',
+//                 title: 'Update Profile',
+//                 interestNames: interestNames,
+//                 user: req.session.user,
+//                 firstName: userData.firstName,
+//                 lastName: userData.lastName,
+//                 email: userData.email,
+//                 bio: userData.bio || '',
+//                 interests: userData.interests || [], 
+//                 profilePic: userData.profilePic || '' 
+//             });
+//         } catch (e) {
+//             res.status(500).json({ error: e });
+//         }
+//     })
+//     .post(isAuthenticated, upload.single("profilePic"), async (req, res) => {
+//         try {
+//             let { firstName, lastName, bio, interests } = req.body;
+            
+//             const userId = req.session.user._id; 
+//             const usersCollection = await users();
+//             const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+//             firstName = helpers.checkString(firstName, 'firstName');
+//             lastName = helpers.checkString(lastName, 'Last Name');
+//             if (typeof bio !== 'string') {
+//                 throw 'Bio must be a string.';
+//             }
+//             interests = helpers.checkInterests(interests, 'interests');
+
+//             let profilePic = user.profilePic;
+//             if (req.file) {
+//                 const oldImagePath = path.join(__dirname, "..", "public", "images", path.basename(user.profilePic));
+    
+//                 console.log(fs.existsSync(oldImagePath))
+//                 if (user.profilePic !== "/public/images/default.png" && fs.existsSync(oldImagePath)) {
+//                     fs.unlinkSync(oldImagePath);
+//                 }
+                
+//                 console.log(oldImagePath)
+//                 console.log(fs.existsSync(oldImagePath));
+//                 profilePic = `/public/images/${req.file.filename}`;
+//             }
+//             const selectedInterests = interests ? interests : user.interests;
+//             console.log("selectedInterests : " ,selectedInterests )
+
+//             const updatedUser = await profileDataFunction.updateUserProfile(
+//                 user.email,         
+//                 firstName.trim(),   
+//                 bio ,        
+//                 selectedInterests,     
+//                 lastName.trim(),
+//                 profilePic     
+//             );
+//             res.redirect('/profile');
+//         } catch (e) {
+//             console.log("error : " , e);
+//             const usersCollection = await users();
+//             const userId = req.session.user._id;
+//             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+//             const savedPlacesIds = userData.savedPlaces || [];
+//             let savedPlaces = [];
+            
+//             for (let placeId of savedPlacesIds) {
+//                 try {
+//                     const place = await placesData.getPlaceById(placeId);
+//                     savedPlaces.push(place);
+//                 } catch (error) {
+//                     console.error(`Error fetching place with ID ${placeId}: ${error}`);
+//                 }
+//             }
+//             res.render('./users/profile', {
+//                 layout: 'main',  
+//                 title: 'Profile',  
+//                 user: req.session.user,
+//                 profile: true,
+//                 firstName: req.body.firstName,
+//                 lastName: req.body.lastName,
+//                 bio: req.body.bio || '',
+//                 interests: req.body.interests || [],  
+//                 savedPlaces: savedPlaces || [],
+//                 profilePic: userData.profilePic
+//             });
+//         }
+//     });
+
+
+
 router
     .route('/updateProfile')
     .get(isAuthenticated, async (req, res) => {
@@ -206,8 +309,10 @@ router
 
             const interestCollection = await allInterests();
             const interests = await interestCollection.find({}).toArray();
+            const userInterests = userData.interests || [];
             const interestNames = interests.map(interest => ({
-                interestName: interest.interestName 
+                interestName: interest.interestName,
+                checked: userInterests.includes(interest.interestName) // Add checked property
             }));
 
             res.render('./users/updateprofile', {
@@ -229,7 +334,6 @@ router
     .post(isAuthenticated, upload.single("profilePic"), async (req, res) => {
         try {
             let { firstName, lastName, bio, interests } = req.body;
-            
             const userId = req.session.user._id; 
             const usersCollection = await users();
             const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
@@ -255,7 +359,6 @@ router
                 profilePic = `/public/images/${req.file.filename}`;
             }
             const selectedInterests = interests ? interests : user.interests;
-            console.log("selectedInterests : " ,selectedInterests )
 
             const updatedUser = await profileDataFunction.updateUserProfile(
                 user.email,         
@@ -296,6 +399,7 @@ router
             });
         }
     });
+
 
 router
     .route("/deleteProfilePic")

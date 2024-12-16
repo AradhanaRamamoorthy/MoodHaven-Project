@@ -91,7 +91,7 @@ header {
         <div id="interests">
            {{#each interestNames}}
 <label>
-    <input class="interest-checkbox" type="checkbox" name="interests" value="{{this.interestName}}" {{#if this.checked}}checked{{/if}}>
+    <input class="interest-checkbox" type="checkbox" name="interests[]" value="{{this.interestName}}" {{#if this.checked}}checked{{/if}}>
     {{this.interestName}}
 </label>
 {{/each}}

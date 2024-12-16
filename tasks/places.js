@@ -54,7 +54,6 @@ try
         { name: "Cheese + Wine Hoboken", activities: ["Comfort Blends", "Creative Pairings"] },
         { name: "Grand Vin", activities: ["Comfort Blends", "Vineyard Tour", "Bold Flavours", "Creative Pairings", "Themed Dinner", "Ingredient Exploration", "Cuisine Exploration"] },
         { name: "Ventimiglia Vineyard", activities: ["Comfort Blends", "Vineyard Tour", "Bold Flavours"] },
-        { name: "Pair Wine Tours", activities: ["Comfort Blends", "RCreative Pairings"] },
         { name: "Zack's Oar Bar and Restaurant", activities: ["Themed Dinner", "Ingredient Exploration", "Cuisine Exploration"] },
         { name: "Physique 57", activities: ["Light Cardio", "Core Strengthening Exercise", "Social Gym"] },
         { name: "Fitness in the Park", activities: ["Light Cardio", "Core Strengthening Exercise"] },

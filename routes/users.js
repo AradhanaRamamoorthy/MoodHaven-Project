@@ -11,26 +11,27 @@ import nodemailer from 'nodemailer';
 import {ObjectId} from 'mongodb';
 import { placesData } from '../data/index.js';
 import helpers from '../helpers.js';
-// import path from 'path';
-// import multer from 'multer';
+import path from 'path';
+import multer from 'multer';
+import fs from 'fs';
+
+import { fileURLToPath } from "url";
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "public/images");
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname);
+    },
+});
+const upload = multer({ storage });
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//       cb(null, "public/images");
-//     },
-//     filename: (req, file, cb) => {
-//       cb(
-//         null,
-//         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-//       );
-//     },
-//   });
-//   const upload = multer({
-//     storage,
-//   });
-  
 function isAuthenticated(req, res, next) {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -112,11 +113,6 @@ router
             if (!user) {
                 return res.status(404).json({ error: 'Invalid email or password.' });
             }
-
-            const hashedPassword = await bcrypt.hash(password, 10);
-            console.log('Entered: ', password);
-            console.log('DB: ', user.password);
-            console.log('hashed: ',hashedPassword);
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (!isPasswordValid) {
@@ -206,7 +202,7 @@ router
             const interests = await interestCollection.find({}).toArray();
             const interestNames = interests.map(interest => ({
                 interestName: interest.interestName 
-             }));
+            }));
 
             res.render('./users/updateprofile', {
                 layout: 'main',
@@ -216,7 +212,7 @@ router
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
-                bio: userData.bio || 'No bio provided.',
+                bio: userData.bio || '',
                 interests: userData.interests || [], 
                 profilePic: userData.profilePic || '' 
             });
@@ -224,37 +220,40 @@ router
             res.status(500).json({ error: e });
         }
     })
-    .post(isAuthenticated, async (req, res) => {
-        // .post(upload.single('profilePic'), async (req, res) => {
+    .post(isAuthenticated, upload.single("profilePic"), async (req, res) => {
         try {
             const { firstName, lastName, bio, interests } = req.body;
-        
-                // let profilePic = null;
-    
-                // if (req.file) {
-                //     profilePic = `/public/images/${req.file.filename}`;
-                // }
-                // //profilePic = `/public/images/ff1.png`;
-                // console.log("req.file 22 and profilePic: " ,req.file , profilePic);
-    
-    
             if (!firstName || !lastName) {
                 throw 'First name and last name are required.';
             }
-            const user = req.session.user; 
-            if (!user) {
+            const userId = req.session.user._id; 
+            const usersCollection = await users();
+            const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
-                return res.redirect('/login'); 
-
+            let profilePic = user.profilePic;
+            if (req.file) {
+                // Construct the path to the old profile picture
+                const oldImagePath = path.join(__dirname, "..", "public", "images", path.basename(user.profilePic));
+    
+                console.log(fs.existsSync(oldImagePath))
+                // Delete the old profile picture if it's not the default image
+                if (user.profilePic !== "/public/images/default.png" && fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+                
+                console.log(oldImagePath)
+                console.log(fs.existsSync(oldImagePath));
+                // Set the new profile picture path
+                profilePic = `/public/images/${req.file.filename}`;
             }
-            const selectedInterests = interests ? interests : [];
+            const selectedInterests = interests ? interests : user.interests;
             const updatedUser = await profileDataFunction.updateUserProfile(
                 user.email,         
                 firstName.trim(),   
                 bio || null,        
                 selectedInterests,     
                 lastName.trim(),
-                // profilePic     
+                profilePic     
             );
             res.redirect('/profile');
         } catch (e) {
@@ -273,30 +272,6 @@ router
                     console.error(`Error fetching place with ID ${placeId}: ${error}`);
                 }
             }
-    //         res.redirect('/profile');
-    //      }
-    // });
-
-
-
-    // router
-    // .route('/removeProfilePic')
-    // .post(async (req, res) => {
-    //     try {
-            
-    //         const user = req.session.user; 
-    //         if (!user) {
-    //             return res.redirect('/login'); 
-    //         }
-            
-    //         const updatedUser = await profileDataFunction.removeProfilePic(
-    //             user.email,         
-    //         );
-    //         res.redirect('/profile');
-        // } catch (e) {
-        //     console.log("error : " , e);
-        //     res.redirect('/profile');
-
             res.render('./users/profile', {
                 layout: 'main',  
                 title: 'Profile',  
@@ -304,13 +279,43 @@ router
                 profile: true,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
-                bio: req.body.bio || 'No bio provided.',
+                bio: req.body.bio || '',
                 interests: req.body.interests || [],  
                 savedPlaces: savedPlaces || [],
-                // profilePic: userData.profilePic || ''
+                profilePic: userData.profilePic
             });
         }
     });
+
+router
+    .route("/deleteProfilePic")
+    .post(isAuthenticated, async (req, res) => {
+        try {
+          const userId = req.session.user._id;
+          const usersCollection = await users();
+      
+          const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+      
+          // Remove the current profile picture
+        //   if (userData.profilePic) {
+        //     const oldImagePath = path.join(__dirname, "..", "public", userData.profilePic);
+        //     if (fs.existsSync(oldImagePath)) {
+        //       fs.unlinkSync(oldImagePath); // Delete profile picture file
+        //     }
+        //   }
+      
+        //   // Remove profilePic field from the database
+        //   await usersCollection.updateOne(
+        //     { _id: new ObjectId(userId) },
+        //     { $unset: { profilePic: "" } }
+        //   );
+      
+          res.redirect("/profile");
+        } catch (e) {
+          console.error("Error deleting profile picture:", e);
+          res.status(500).render("error", { error: e });
+        }
+      });
 
 router
     .route('/profile')
@@ -343,9 +348,9 @@ router
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
-                bio: userData.bio || 'No bio provided.',
+                bio: userData.bio || '',
                 interests: userData.interests || [],
-                // profilePic: userData.profilePic? userData.profilePic : 'No Profile Picture uploaded',
+                profilePic: userData.profilePic, //? userData.profilePic : 'No Profile Picture uploaded',
                 savedPlaces: savedPlaces || [],
             });
         } catch (error) {

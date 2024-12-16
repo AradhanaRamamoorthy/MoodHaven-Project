@@ -92,12 +92,11 @@ header {
     <main>
 {{#if firstName}}
     <div>
-        
-           
+            <img src="{{profilePic}}" alt="Profile Picture" style="max-width: 150px; max-height: 150px;" />           
             <p><strong>First Name:</strong> {{firstName}}</p>
             <p><strong>Last Name:</strong> {{lastName}}</p>
             <p><strong>Email:</strong> {{email}}</p>
-            <p><strong>Bio:</strong> {{#if bio}}{{bio}}{{else}}No bio provided.{{/if}}</p>
+            <p><strong>Bio:</strong> {{#if bio}}{{bio}}{{else}}No bio provided.{{/if}}</p> 
             <p><strong>Interests:</strong> {{#if interests}}{{interests}}{{else}}No interests provided.{{/if}}</p>
             <p><strong>Saved Places:</strong> 
             {{#if savedPlaces}}

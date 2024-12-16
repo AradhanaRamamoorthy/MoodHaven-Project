@@ -10,9 +10,7 @@ let exportedMethods = {
       email = helpers.checkEmail(email, 'email');
       password = helpers.checkString(password, 'password');
     
-      console.log("addUser: ", password);
       const hashedPassword = await bcrypt.hash(password, 10);
-      console.log("addUser: ", hashedPassword);
         let newUser = {
             firstName: firstName,
             lastName: lastName,
@@ -41,7 +39,7 @@ let exportedMethods = {
       firstName = helpers.checkString(firstName, 'firstName');
       lastName = helpers.checkgoogleLastname(lastName, 'lastName');
       email = helpers.checkEmail(email, 'email');
-      profilePic = helpers.checkString('password');
+      profilePic = helpers.checkString(profilePic, 'profilePic');
 
       let newUser = {     
             firstName: firstName,  

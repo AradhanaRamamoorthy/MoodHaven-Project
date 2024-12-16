@@ -16,6 +16,9 @@ location_access.addEventListener("click", (event) => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
+      if(!latitude || !longitude){
+        res.status(400).json({ error: 'Invalid location data.' });
+      }
       try {
       const response = await fetch('/places/location', {
         method: 'POST',

@@ -75,7 +75,7 @@ header {
         </div>
     </header>    
 <main>
-    <form action="/updateProfile" method="POST">
+    <form action="/updateProfile" method="POST"  enctype="multipart/form-data">
         <label for="firstName">First Name:</label>
         <input type="text" id="firstName" name="firstName" value="{{firstName}}" required>
 
@@ -83,22 +83,31 @@ header {
         <input type="text" id="lastName" name="lastName" value="{{lastName}}" required>
 
         <label for="bio">Bio:</label>
-        <textarea id="bio" name="bio">{{bio}}</textarea>
+        <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{bio}}</textarea>
 
         <label for="interests">Select Interests (at least 5 required):</label>
         <div>Current selected interests : {{interests}}</div>
         <div id="interests">
-           
-           
-        {{#each interestNames}}
-          <label><input type="checkbox" name="interests" value={{this.interestName}} {% if {{interests}}.includes({{this.interestName}}) %}checked{% endif %}> {{this.interestName}}</label>
-        {{/each}}
-
-        
+            {{#each interestNames}}
+            <label><input type="checkbox" name="interests" value={{this.interestName}} {% if {{interests}}.includes({{this.interestName}}) %}checked{% endif %}> {{this.interestName}}</label>
+            {{/each}}
         </div>
 
+        {{!-- {{#if profilePic}}
+            <img src="{{profilePic}}" alt="Profile Picture" width="150">
+            <form action="/deleteProfilePic" method="POST">
+                <button type="submit">Delete Profile Picture</button>
+            </form>
+        {{else}}
+            <p>No profile picture uploaded.</p>
+        {{/if}} --}}
+        <label for="profilePic">Profile Picture:</label>
+        <input type="file" id="profilePic" name="profilePic" accept="image/*">
+        
         <button type="submit">Save Changes</button>
     </form>
+
+    
 
     <a href="/profile">Cancel</a>
 </main>

@@ -1,7 +1,7 @@
 import {users} from '../config/mongoCollections.js';
 
 let exportedMethods = {
-    async updateUserProfile(email, firstName, bio, interests, lastName) {
+    async updateUserProfile(email, firstName, bio, interests, lastName, profilePic) {
         try {
             const usersCollection = await users();
             const updateData = {};
@@ -10,6 +10,7 @@ let exportedMethods = {
             if (lastName) updateData.lastName = lastName;
             if (bio) updateData.bio = bio;
             if (interests) updateData.interests = interests;
+            if (profilePic) updateData.profilePic = profilePic;
             const result = await usersCollection.updateOne(
                 { email: email }, 
                 { $set: updateData }

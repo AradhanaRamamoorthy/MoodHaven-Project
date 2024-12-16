@@ -15,227 +15,140 @@ async function addInterest(interest, activities) {
 }
 
 const interestsActivities = {
-    'Painting/Sketching': [
+    'Painting or Sketching': [
         "Acrylic Painting",
         "Digital art on a tablet",
         "Quick Doodles",
-        "Mandala Art",
-        "Outdoor spray art",
-        "Outdoor sketching"
+        "Outdoor Spray Art",
+        "Sketching"
     ],
     'Writing': [
-        "Old Memories",
-        "Create character/Fantasy",
-        "Blog writing",
-        "Inspiring story",
-        "Nature Inspired Poetry",
-        "Quiet park Journal"
+        "Old Memories Diary",
+        "Create Fantasy Character",
+        "Blog Writing",
+        "Inspiring Story",
+        "Park Journal"
     ],
     'Photography': [
         "Still Life Photography",
         "Macro Photography",
-        "Shadow play/unusual angles",
-        "Contrast shots/Quiet spots",
         "Street Photography",
-        "Nature Photography (Sunset)"
+        "Sunset Photography"
     ],
     'Dance': [
-        "Energetic Freestyle",
+        "Energetic FreeStyle",
         "Flow Dance",
         "Gentle Choreography",
-        "Expressive Moves",
-        "Public Dancing",
+        "Ballroom Dance",
         "Outdoor Salsa"
     ],
     'Pottery': [
-        "Soft Shapes/Smooth Designs",
         "Hand Molding",
         "Sculpt Figures",
         "Try Ceramics",
-        "Botanical clay",
-        "Pottery Museum"
+        "Botanical Clay"
     ],
     'Crafting': [
         "Origami",
         "Handmade Cards/Scrapbooking",
-        "DIY frames",
         "Knitting/crocheting",
-        "Social Crafting",
-        "Create Nature Inspired crafts"
+        "Social Crafting"
     ],
-    'Running': [
-        "Treadmill run",
-        "Form improvement drills",
-        "Virtual marathon training",
-        "Interval training",
-        "Trail run/City sprint",
-        "Scenic route jog"
-    ],
-    'Cycling': [
-        "Steady cycling",
-        "Virtual cycling races",
-        "City ride",
-        "Friend group cycling",
-        "Park cycle",
-        "Riverside path"
-    ],
-    'Hiking/Trekking': [
-        "Treadmill incline hike",
-        "Hiking route planning",
-        "Strength Exercise",
-        "Virtual mountain trek simulation",
-        "Waterfront walk",
-        "Indoor rock climbing"
-    ],
-    'Swimming': [
-        "Indoor lap swimming",
-        "Water aerobics class",
-        "Diving practice",
-        "Floating/smooth laps",
-        "Wave pool",
-        "Pool games"
-    ],
-    'GYM': [
-        "Light cardio",
-        "Core strengthening exercise",
-        "Treadmill walk",
-        "Focus on form",
-        "Park circuit training",
-        "Social gym"
-    ],
-    'Yoga': [
-        "Meditation",
-        "Stretching routine",
-        "Relaxation yoga",
-        "Release/balance poses",
-        "Social yoga",
-        "Meditate near waterfront/park"
-    ],
-    'Tennis': [
-        "Serve training",
-        "Balance and coordination exercise",
-        "Rally practice",
-        "Tennis drills",
-        "Airy courts",
-        "Park tennis match"
-    ],
-    'Bowling': [
-        "Outdoor bowling"
-    ],
-    'Karate/Boxing': [
-        "Shadowboxing",
-        "Bag work",
-        "Technique drilling",
-        "Solo practice",
-        "Guided class",
-        "Dynamic group"
+    'Running or Walking': [
+        "Treadmill Run",
+        "Form Improvement Drills",
+        "Trail run/City Sprint",
+        "Scenic Route Jog"
     ],
     'Baking': [
-        "Cake decorating",
-        "Pastry/macaron baking",
-        "Workshop/class",
-        "Seasonal recipe tryout",
-        "Baking ingredients market",
-        "Picnic with baked goods"
+        "Pastry/Macron Baking",
+        "Seasonal recipe Tryout",
+        "Baking Classes"
     ],
-    'Coffee/Tea Tasting': [
-        "Home brew experimentation",
-        "Try exotic/different flavors",
-        "Pair with music/treats",
-        "Cafe visit",
+    'Coffee or Tea Tasting': [
+        "Try exotic/Different Flavours",
+        "Cafe Visit",
         "Relaxing brews"
     ],
     'Wine Tasting': [
-        "Creative pairings",
-        "Comfort blends",
-        "Bold flavors",
-        "Open air tasting",
-        "Soft ambiance",
-        "Vineyard tour"
+        "Creative Pairings",
+        "Comfort Blends",
+        "Bold Flavours",
+        "Vineyard Tour"
     ],
     'Cooking': [
         "Cooking class",
-        "Cuisine exploration",
-        "Ingredient exploration",
-        "Themed dinner",
-        "BBQ session"
+        "Cuisine Exploration",
+        "Ingredient Exploration",
+        "Themed Dinner",
+    ],
+    'GYM': [
+        "Light Cardio",
+        "Core Strengthening Exercise",
+        "Treadmill Walk",
+        "Social Gym"
+    ],
+    'Swimming': [
+        "Indoor Lap Swimming",
+        "Diving Practice",
+        "Floating/smooth laps",
+    ],
+    'Hiking or Trekking': [
+        "Strengthening Exercise",
+        "Indoor rock climbing"
+    ],
+    'Cycling': [
+        "Steady Cycling",
+        "City ride",
+        "Friends group Cycling",
+        "Riverside Path"
+    ],
+    'Tennis': [
+        "Rally Practice",
+        "Tennis Drills",
+        "Park Tennis Match"
     ],
     'Video Gaming': [
-        "Online tournament",
-        "Multiplayer session",
-        "VR headset gaming",
-        "Try new video game",
-        "Social gaming",
-        "Friendly competitions"
+        "Multiplayer Game",
+        "Social Gaming",
+        "Friendly Competition"
     ],
-    'Escape Rooms': [
-        "Team game night",
-        "Virtual escape room",
-        "Outdoor escape game",
-        "Treasure hunt in park"
+    'Escape Room': [
+        "Team Game Night",
+        "Outdoor Escape Game",
+        "Treasure Hunt in Park"
     ],
-    'Puzzle Solving': [
-        "Jigsaw puzzle",
-        "Logic puzzle",
-        "Crossword competition",
-        "Rubik's cube practice",
-        "Outdoor scavenger hunt",
-        "Online puzzles"
+    'Puzzle solving': [
+        "Jigsaw Puzzle",
+        "Logic Puzzle",
+        "Crossword Competition",
     ],
-    'Self Care': [
+    'Self care': [
         "Meditation",
-        "Spa day/aromatherapy",
+        "Spa day/Aromatherapy",
         "Skincare routine",
         "Journaling",
-        "Outdoor spa",
-        "Soothing music"
     ],
-    'Pet Loving': [
-        "Pet obedience training/interactive puzzle",
-        "Treats for pet",
-        "Pet photoshoot",
-        "Pet grooming session",
-        "Park day"
-    ],
-    'Shopping': [
-        "Online shopping",
-        "Thrift or vintage shop tour",
-        "Closet organization and styling",
-        "Personalized shopping guide creation/style lookbook",
-        "Window shopping",
-        "Local flea market"
+    'Pet loving': [
+        "Pet Obedience Training",
+        "Treats for Pets",
+        "Park Day"
     ],
     'Partying': [
-        "Themed house party",
-        "Karaoke night",
-        "Game night",
-        "DIY cocktail/mocktail night",
-        "Virtual party (fun virtual games and music)",
-        "Visit a pub"
-    ],
-    'Socializing': [
-        "Themed house party",
-        "Karaoke night",
-        "Game night",
-        "DIY cocktail/mocktail night",
-        "Virtual party (fun virtual games and music)",
-        "Visit a pub"
+        "Themed Party",
+        "DIY Cocktail/Mocktail night",
+        "Visit a Pub"
     ],
     'Reading': [
-        "Reading nook setup (cozy corner)",
-        "Literary podcast",
-        "Library or bookstore visit",
-        "Author talk or signing",
-        "Park reading session",
-        "Outdoor book cafe"
+        "Library or BookStore Visit",
+        "Park Reading",
+        "Outdoor Book Cafe"
     ],
     'Socializing and Networking': [
         "Networking events",
-        "Skill-building workshops",
-        "Co-working space or coffee shop workdays",
-        "Public speaking clubs",
-        "Community volunteer events",
-        "Outdoor conferences"
+        "Skill building Workshops",
+        "Coffee-shop Workdays",
+        "Community Volunteer Events",
     ]
 };
 

@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (selectedInterest) {
             fetchActivities(selectedInterest);
         } else {
-            showError("Please select an interest before submitting.");
+            clearSelectedInterest();
         }
     });
 
@@ -58,6 +58,13 @@ document.addEventListener("DOMContentLoaded", function() {
         activitiesContainer.classList.remove("hidden");
         nextPageBtn.classList.remove("hidden");
         activityForm.classList.remove("hidden");
+    }
+    function clearSelectedInterest() {
+        interestSelect.selectedIndex = 0; 
+        selectedInterest = "";  
+        activitySelect.innerHTML = `<option value="" disabled selected>Choose an activity</option>`;
+        activitiesContainer.classList.add("hidden");
+        errorContainer.classList.add("hidden"); 
     }
     activitySelect.addEventListener("change", function () {
         const selectedActivity = this.value;

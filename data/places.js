@@ -108,6 +108,7 @@ const user_comments = async(placeId, comment) => {
         comment_content : comment.comment_content,
         userName : comment.comment_author,
         userId : comment.user_Id,
+        user_profilePic : comment.user_profilePic,
         date : comment.date
     }
     const placeCollection = await places();

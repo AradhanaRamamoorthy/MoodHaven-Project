@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { reviews, places, users } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
-import { validateReviewData, validateReviewExists } from '../data/review.js';
+import { validateReviewData } from '../data/review.js';
 
 const router = Router();
 
@@ -17,9 +17,6 @@ router.post('/review', async (req, res) => {
 
     const trimmedUserId = userId.trim();
     const trimmedPlaceId = placeId.trim();
-    
-    await validateReviewExists(trimmedPlaceId, trimmedUserId);
-
     const reviewsCollection = await reviews();
     const placesCollection = await places();
     const usersCollection = await users();

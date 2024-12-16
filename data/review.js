@@ -45,18 +45,6 @@ async function validateReviewData(userId, placeId, rating) {
   }
 }
 
-async function validateReviewExists(placeId, userId) {
-  const { reviews } = await getCollections();
-  const placeReviewDoc = await reviews.findOne({ placeId: new ObjectId(placeId) });
 
-  if (placeReviewDoc) {
-    const existingReview = placeReviewDoc.reviews.find(
-      (review) => String(review.userId) === userId
-    );
-    if (existingReview) {
-      throw new Error('Review already exists for this user at this place.');
-    }
-  }
-}
 
-export { getCollections, validateReviewData, validateReviewExists };
+export { getCollections, validateReviewData };

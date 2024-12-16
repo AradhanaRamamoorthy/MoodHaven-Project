@@ -101,10 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 comments_updated.forEach((comment) => {
                     let comment_display_Info = document.createElement("div");
                     comment_display_Info.classList.add("comment_display_info");
-                    let date_value  = comment.date;
-                    let [datePart, timePart] = date_value.split(", ");
-                    let [day, month, year] = datePart.split("/");
-                    let formattedDate = `${year}-${month}-${day}T${timePart}`
 
                     let user_details = document.createElement("div");
                     user_details.classList.add("user-details");
@@ -123,8 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     comment_display_Info.appendChild(user_details);
 
                     let Date_commented = document.createElement('small');
-                    let commentDate = new Date(formattedDate);
-                    Date_commented.textContent = commentDate.toLocaleString();
+                    Date_commented.textContent = `${comment.date}`; 
                     Date_commented.classList.add("commentTime");
                     comment_display_Info.appendChild(Date_commented);
 

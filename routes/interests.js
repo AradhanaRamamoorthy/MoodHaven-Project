@@ -1,12 +1,22 @@
 import { Router } from 'express';
-import { interestData } from '../data/index.js';  
-const router = Router();
+import { interestData } from '../data/index.js';
+import helpers from '../helpers.js';
 
-router.get('/:interest/activities', async (req, res) => {
+const router = Router();
+function isAuthenticated(req, res, next) {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    next();
+}
+
+router.get('/:interest/activities', isAuthenticated, async (req, res) => {
     const interestName = req.params.interest;
+    
     if (!interestName || typeof interestName !== 'string' || !/^[a-zA-Z\s]+$/.test(interestName)) {
         return res.status(400).json({ error: 'Invalid interest parameter. Please provide a valid interest name.' });
     }
+
     try {
         const activities = await interestData.getActivitiesByInterest(interestName);
         if (activities.length > 0) {
@@ -19,6 +29,5 @@ router.get('/:interest/activities', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-
 
 export default router;

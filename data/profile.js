@@ -1,8 +1,20 @@
 import {users} from '../config/mongoCollections.js';
+import helpers from '../helpers.js';
 
 let exportedMethods = {
     async updateUserProfile(email, firstName, bio, interests, lastName, profilePic) {
         try {
+            email = helpers.checkEmail(email, 'email')
+            firstName = helpers.checkString(firstName, 'firstName');
+            lastName = helpers.checkString(lastName, 'lastName');
+            if(typeof bio !== 'string'){
+                throw`Bio must be a string`
+            }
+            interests = helpers.checkInterests(interests, 'interests');
+
+        } catch(e){
+            console.error("Error updating user profile:", e);}
+        try{
             const usersCollection = await users();
             const updateData = {};
             
@@ -15,8 +27,8 @@ let exportedMethods = {
                 { email: email }, 
                 { $set: updateData }
             );
-            if (result.modifiedCount === 0) {
-                throw 'No data updated, user may not exist or no changes made.';
+            if (Object.keys(updateData).length && result.modifiedCount === 0) {
+                throw `Error updating please try again`;
             }
             return await usersCollection.findOne({ email: email });
         } catch (error) {
@@ -27,21 +39,28 @@ let exportedMethods = {
 
     async completeProfile(email, bio, interests) {
         try {
+            email = helpers.checkEmail(email, 'email');
+            if(typeof bio !== 'string'){
+                throw `Bio must be a string`;
+            }
+            if(interests){
+            interests = helpers.checkInterests(interests, 'interests');}
+            
             const usersCollection = await users();
             const updateData = {};
             if (bio) updateData.bio = bio;
             if (interests) updateData.interests = interests;
             const result = await usersCollection.findOneAndUpdate(
-                { email: email }, 
+                { email: email.trim( ) }, 
                 { $set: updateData }
             );
-            if (result.modifiedCount === 0) {
-                throw 'No data updated, user may not exist or no changes made.';
+            if (Object.keys(updateData).length && result.modifiedCount === 0) {
+                throw `Error updating please try again`;
             }
             return await usersCollection.findOne({ email: email });
         } catch (error) {
-            console.error("Error updating user profile:", error);
-            throw error;
+            console.error("Error:", error);
+           
         }
     }
 }

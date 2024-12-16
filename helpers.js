@@ -55,6 +55,18 @@ checkArray(arrValue, varName)
     }
     return arrValue;
 },
+checkInterests(arrValue, varName){
+    if(!arrValue || !Array.isArray(arrValue)) throw `The value of ${varName} should be provided and should be in an Array`;
+    if(Array.isArray(arrValue)){
+        arrValue.forEach((element) => {
+            this.checkString(element,varName)
+        })
+    }
+    if (arrValue.length === 0 || arrValue.length > 5) {
+        throw `${varName} must contain at least 1 and no more than 5 items`;
+    }
+    return arrValue;
+},
 checkObject(objValue, varName)
 {
     if(!objValue || typeof objValue !== 'object' || Array.isArray(objValue)) throw `The ${varName} should be an Object!`;

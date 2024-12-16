@@ -163,29 +163,35 @@ router
     })
     .post(isAuthenticated, async (req, res) => {
         try {
-            const { bio, interests } = req.body;
+            let { bio, interests } = req.body;
             console.log(interests);
             const user = req.session.user;
 
-            if (!user) {
-                return res.redirect('/login');
-            }
+            // if (!user) {
+            //     return res.redirect('/login');
+            // }
 
-            const usersCollection = await users();
-            const updateData = {};
-            if (bio) updateData.bio = bio;
-            if (interests) updateData.interests = Array.isArray(interests) ? interests : [interests];
-            console.log(updateData)
-            const result = await usersCollection.findOneAndUpdate(
-                { _id: new ObjectId(user._id) },
-                { $set: updateData }
-            );
-
-            if (result.modifiedCount === 0) {
-                throw `No data updated, user may not exist or no changes made.`;
+            if(typeof bio !== 'string'){
+                throw `Bio must be a string`;
             }
+            if(interests){
+            interests = helpers.checkInterests(interests, 'interests');}
+            const updatedUser = await profileDataFunction.completeProfile(user.email, bio, interests);
+            console.log(updatedUser);
+
+            // const usersCollection = await users();
+            // const updateData = {};
+            
+            // const result = await usersCollection.findOneAndUpdate(
+            //     { _id: new ObjectId(user._id) },
+            //     { $set: updateData }
+            // );
+
+            // if (result.modifiedCount === 0) {
+            //     throw `No data updated, user may not exist or no changes made.`;
+            // }
             res.redirect('/profile');
-        } catch (error) {
+        } catch (e) {
             res.status(500).json({ error: e });
         }
     });
@@ -222,35 +228,39 @@ router
     })
     .post(isAuthenticated, upload.single("profilePic"), async (req, res) => {
         try {
-            const { firstName, lastName, bio, interests } = req.body;
-            if (!firstName || !lastName) {
-                throw 'First name and last name are required.';
-            }
+            let { firstName, lastName, bio, interests } = req.body;
+            
             const userId = req.session.user._id; 
             const usersCollection = await users();
             const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
+            firstName = helpers.checkString(firstName, 'firstName');
+            lastName = helpers.checkString(lastName, 'Last Name');
+            if (typeof bio !== 'string') {
+                throw 'Bio must be a string.';
+            }
+            interests = helpers.checkInterests(interests, 'interests');
+
             let profilePic = user.profilePic;
             if (req.file) {
-                // Construct the path to the old profile picture
                 const oldImagePath = path.join(__dirname, "..", "public", "images", path.basename(user.profilePic));
     
                 console.log(fs.existsSync(oldImagePath))
-                // Delete the old profile picture if it's not the default image
                 if (user.profilePic !== "/public/images/default.png" && fs.existsSync(oldImagePath)) {
                     fs.unlinkSync(oldImagePath);
                 }
                 
                 console.log(oldImagePath)
                 console.log(fs.existsSync(oldImagePath));
-                // Set the new profile picture path
                 profilePic = `/public/images/${req.file.filename}`;
             }
             const selectedInterests = interests ? interests : user.interests;
+            console.log("selectedInterests : " ,selectedInterests )
+
             const updatedUser = await profileDataFunction.updateUserProfile(
                 user.email,         
                 firstName.trim(),   
-                bio || null,        
+                bio ,        
                 selectedInterests,     
                 lastName.trim(),
                 profilePic     
@@ -324,7 +334,27 @@ router
             const usersCollection = await users();
             const userId = req.session.user._id;
             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
+            let firstName = userData.firstName;
+            let lastName = userData.lastName;
+            let email = userData.email;
+            let bio = userData.bio || '';
+            let interests = userData.interests || [];
+    
+
+            firstName = helpers.checkString(firstName, 'firstName');
+             lastName = helpers.checkString(lastName, 'Last Name');
+             email = helpers.checkEmail(email, 'email')
+             if(typeof bio !== 'string'){
+                throw`Bio must be a string`
+            }
+            if(interests){
+            interests = helpers.checkInterests(interests, 'interests');}
             const savedPlacesIds = userData.savedPlaces || [];
+            if (!Array.isArray(savedPlacesIds)) {
+
+                throw 'Saved Places must be an array.';
+
+            }
             let savedPlaces = [];
             
             for (let placeId of savedPlacesIds) {

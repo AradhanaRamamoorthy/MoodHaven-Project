@@ -9,17 +9,26 @@ router.post('/review', async (req, res) => {
   const { userId, placeId, rating, savePlace } = req.body;
 
   try {
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(placeId)) {
+      return res.status(400).json({ error: 'Invalid user or place ID.' });
+    }
+
     await validateReviewData(userId, placeId, rating);
-       
+
     const trimmedUserId = userId.trim();
     const trimmedPlaceId = placeId.trim();
+    
     await validateReviewExists(trimmedPlaceId, trimmedUserId);
 
     const reviewsCollection = await reviews();
     const placesCollection = await places();
     const usersCollection = await users();
-    
+
     const place = await placesCollection.findOne({ _id: new ObjectId(trimmedPlaceId) });
+    if (!place) {
+      return res.status(404).json({ error: 'Place not found.' });
+    }
+
     const placeReviewDoc = await reviewsCollection.findOne({ placeId: new ObjectId(trimmedPlaceId) });
 
     if (!placeReviewDoc) {

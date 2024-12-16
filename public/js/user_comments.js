@@ -78,6 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let userNameElement = commentForm.querySelector(".userName");
             let userName = userNameElement.textContent.trim();
+            let userProfileElement = commentForm.querySelector(".user-profile-pic");
+            let userProfilePic = userProfileElement ? userProfileElement.src : null;
 
             try {
                 const response = await fetch(`/places/placepage/${place_Id}/comments`, {
@@ -85,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ comment_Text: comment_Text, user_name: userName })
+                    body: JSON.stringify({ comment_Text: comment_Text, user_name: userName, user_profilePic: userProfilePic })
                 });
 
                 if (!response.ok) {
@@ -104,11 +106,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     let [day, month, year] = datePart.split("/");
                     let formattedDate = `${year}-${month}-${day}T${timePart}`
 
+                    let user_details = document.createElement("div");
+                    user_details.classList.add("user-details");
+
+                    let user_profile_pic = document.createElement("img");
+                    user_profile_pic.src = comment.user_profilePic; 
+                    user_profile_pic.alt = `${comment.userName}'s profile picture`;
+                    user_profile_pic.classList.add("user-profile-pic");
+                    user_details.appendChild(user_profile_pic);
+
                     let userName_commented = document.createElement("p");
                     userName_commented.classList.add('userName');
                     userName_commented.innerHTML = `${comment.userName}`;
-
-                    comment_display_Info.appendChild(userName_commented);
+                    user_details.appendChild(userName_commented);
+                    
+                    comment_display_Info.appendChild(user_details);
 
                     let Date_commented = document.createElement('small');
                     let commentDate = new Date(formattedDate);

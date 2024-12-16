@@ -20,7 +20,8 @@ let exportedMethods = {
             
             if (firstName) updateData.firstName = firstName;
             if (lastName) updateData.lastName = lastName;
-            if (bio) updateData.bio = bio;
+            if (bio || bio === "") {
+                updateData.bio = bio};
             if (interests) updateData.interests = interests;
             if (profilePic) updateData.profilePic = profilePic;
             const result = await usersCollection.updateOne(

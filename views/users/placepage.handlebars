@@ -46,7 +46,12 @@
        
         <form class = "comment_Form" data-place-id = "{{_id}}">
           {{#if user_name}}
-            <p class = "userName">{{user_name}}</p>  <!-- New -->
+           <div class="user-details">
+           {{#if user_profilePic}}
+                <img class="user-profile-pic" src="{{user_profilePic}}" alt="{{user_name}}'s profile" />
+              {{/if}}
+              <p class="userName">{{user_name}}</p>
+            </div>
           {{/if}}
           <textarea id = "commentText-{{_id}}" placeholder = "Drop your comment here..." required></textarea>
           <button type = "submit">Post the Comment</button>
@@ -55,34 +60,7 @@
     </div>
   {{/each}}
 </main>
-<script>
-  function toggleLike(placeId) {
-  const likeButton = document.querySelector(`[data-place-id="${placeId}"]`);
-  const isLiked = likeButton.textContent === "Liked";
-
-  likeButton.textContent = isLiked ? "Like" : "Liked";
-
-console.log()
-
-  fetch('/places/toggleLike', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      placeId: placeId,
-      liked: !isLiked, 
-    }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (!data.success) {
-      alert('Error saving like status');
-    }
-  });
-}
-</script>
-
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"
          integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
          <script src="/public/js/user_comments.js"></script>
+         <script src="/public/js/savedplace.js"></script>

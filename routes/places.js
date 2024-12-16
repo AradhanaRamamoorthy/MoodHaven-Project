@@ -201,7 +201,7 @@ router
         comment_author: user_name,
         user_Id: userId,
         user_profilePic: user_profilePic,
-        date: new Date().toLocaleString()
+        date: new Date().toISOString()
       };
       const updated_place = await placesData.user_comments(place_Id, comment_added);
       res.status(200).json(updated_place.comment);

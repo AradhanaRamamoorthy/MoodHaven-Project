@@ -83,6 +83,7 @@ router
               $set: { searched: true, searchedPlaces: places }, 
             });
         const user_details = await userDataFunctions.getUserById(userId);
+        let user_profilePic = `${user_details.profilePic}`;
         if(!user_details)
         {
           return res.status(404).render('users/placepage', {
@@ -97,6 +98,10 @@ router
             place.comments = place_data ? place_data.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
         }
         const sortedPlaces = await placesData.sortPlaces(places, latitude, longitude);
+        const savedPlaces = user.savedPlaces || [];
+        sortedPlaces.forEach(place => {
+          place.liked = savedPlaces.includes(place._id.toString());
+        });
         if (userId) {
           const userCollection = await users();
           await userCollection.updateOne(
@@ -108,7 +113,7 @@ router
         }
         res.status(200).render('users/placepage', {
           title : 'Places Page',
-          places: sortedPlaces.map(place => ({ ...place, user_name })) , 
+          places: sortedPlaces.map(place => ({ ...place, user_name, user_profilePic })), 
           layout : 'places',
           user: req.session.user
         });
@@ -122,7 +127,6 @@ router
   
   router.post('/toggleLike', async (req, res) => {
     const { placeId, liked } = req.body;
-    const usersCollection = await users();
     const userId = req.session.user?._id;
 
     console.log("placeId , liked , userId : " , placeId , liked , userId);
@@ -163,13 +167,14 @@ router
  router.route('/placepage/:place_Id/comments')
   .post(isAuthenticated, async (req, res) => {
     let place_Id = req.params.place_Id;
-    let { comment_Text, user_name } = req.body; 
+    let { comment_Text, user_name, user_profilePic } = req.body; 
     const userId = req.session.user._id;
     try
     {
       place_Id = helpers.checkId(place_Id);
       comment_Text = helpers.checkString(comment_Text, "user_comment");
       user_name = helpers.checkString(user_name, "userName");
+      if(!user_profilePic) throw 'No user Profile Pic'
     }
     catch(e)
     {
@@ -195,6 +200,7 @@ router
         comment_content: comment_Text,
         comment_author: user_name,
         user_Id: userId,
+        user_profilePic: user_profilePic,
         date: new Date().toLocaleString()
       };
       const updated_place = await placesData.user_comments(place_Id, comment_added);

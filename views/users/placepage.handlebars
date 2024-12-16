@@ -29,14 +29,14 @@
           {{#if comments}}
             {{#each comments}}
               <div class="comment_display_info">
-              <img class="user-profile-pic" src="{{#if user_profilePic}}{{user_profilePic}}{{/if}}" alt="{{userName}}'s profile picture">
               <div class="user-details">
+                <img class="user-profile-pic" src="{{#if user_profilePic}}{{user_profilePic}}{{/if}}" alt="{{userName}}'s profile picture">
                 <p class="userName">
-                  {{userName}} 
+                  {{userName}}  <br>
                   <small class="commentTime">{{date}}</small>
                 </p>
-                <p class="commentContent">{{comment_content}}</p>
               </div>
+              <p class="commentContent">{{comment_content}}</p>
               </div>
             {{/each}}
           {{else}}

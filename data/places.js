@@ -1,6 +1,6 @@
 import { ObjectId} from "mongodb";
 import helpers from '../helpers.js';
-import { places } from "../config/mongoCollections.js";
+import { places, reviews } from "../config/mongoCollections.js";
 import dotenv from 'dotenv'
 dotenv.config({path: '../config/config.env'})
 
@@ -130,6 +130,7 @@ const getCommentsByPlaceId = async (placeId) => {
 };
 
 const sortPlaces = async(places, latitude, longitude) => {
+  const reviewsCollection = await reviews();
     const API_KEY = process.env.API_KEY;
     const destinations = places.map((place) => `${place.location_Coordinates.latitude},${place.location_Coordinates.longitude}`).join('|');
       const googleResponse = await axios.get(
@@ -143,28 +144,33 @@ const sortPlaces = async(places, latitude, longitude) => {
           }
         );
         const distances = googleResponse.data.rows[0].elements;
-        const sortedPlaces = places
-          .map((place, index) => ({
-            ...place,
-            distance: distances[index]?.distance?.value || Infinity, 
-          }))
-          .sort((a, b) => {
-            if (a.distance <= 5000 && b.distance <= 5000) {
-              if (b.google_rating !== a.google_rating) {
-                return b.google_rating - a.google_rating;
-              }
-              return a.distance - b.distance; 
+        for (let i = 0; i < places.length; i++) {
+          const place = places[i];
+          place.distance = distances[i]?.distance?.value || Infinity;
+          if (place.google_rating === null || place.google_rating === undefined) {
+            const reviewData = await reviewsCollection.findOne({ place_id: place.id });
+            place.Rating = reviewData?.avgRating || 0; 
+          } else {
+            place.Rating = place.google_rating;
+          }
+        }
+        const sortedPlaces = places.sort((a, b) => {
+          if (a.distance <= 5000 && b.distance <= 5000) {
+            if (b.Rating !== a.Rating) {
+              return b.Rating - a.Rating;
             }
-        
-            if (a.distance > 5000 && b.distance > 5000) {
-              if (a.distance !== b.distance) {
-                return a.distance - b.distance; 
-              }
-              return b.google_rating - a.google_rating; 
-            }
-        
             return a.distance - b.distance;
-          });
+          }
+      
+          if (a.distance > 5000 && b.distance > 5000) {
+            if (a.distance !== b.distance) {
+              return a.distance - b.distance;
+            }
+            return b.Rating - a.Rating;
+          }
+      
+          return a.distance - b.distance;
+        });
           
         return sortedPlaces;
 };

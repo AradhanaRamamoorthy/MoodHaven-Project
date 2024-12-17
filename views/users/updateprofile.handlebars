@@ -3,21 +3,9 @@
     <div class = "interestForm hidden" id = "error-container">
             <div class = "alert alert-danger text-goes-here"></div>
         </div>
-    <header>
-        <h3>{{firstName}} {{lastName}}'s Profile</h3>
-
-        <div class="profile-dropdown">
-            <span>P</span>
-            <ul>
-                <li><a href="/profile">My profile</a></li>
-                <li><a href="/updateprofile">Edit profile</a></li>
-                <li><a href="/reset">Change Password</a></li>
-                 <li><a href="/logout">Logout</a></li>
-
-                </ul>
-        </div>
-    </header>    
+   
 <main>
+    <h3>{{firstName}} {{lastName}}'s Profile</h3>
     <form action="/updateProfile" method="POST"  enctype="multipart/form-data" id="interestForm">
         <label for="firstName">First Name:</label>
         <input type="text" id="firstName" name="firstName" value="{{firstName}}" required>
@@ -41,14 +29,6 @@
             
         </div>
 
-        {{!-- {{#if profilePic}}
-            <img src="{{profilePic}}" alt="Profile Picture" width="150">
-            <form action="/deleteProfilePic" method="POST">
-                <button type="submit">Delete Profile Picture</button>
-            </form>
-        {{else}}
-            <p>No profile picture uploaded.</p>
-        {{/if}} --}}
         <label for="profilePic">Profile Picture:</label>
         <input type="file" id="profilePic" name="profilePic" accept="image/*">
         

@@ -125,11 +125,12 @@ router
   });
 
   
-  router.post('/toggleLike', async (req, res) => {
+  router
+  .route('/toggleLike')
+  .post(isAuthenticated, async (req, res) => {
     const { placeId, liked } = req.body;
     const userId = req.session.user?._id;
 
-    console.log("placeId , liked , userId : " , placeId , liked , userId);
     try {
     
       const place = await placesData.getPlaceById(placeId);

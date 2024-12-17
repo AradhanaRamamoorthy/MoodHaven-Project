@@ -152,7 +152,7 @@ router
             }));
 
             res.render('./users/home', {
-                layout: 'main',
+                layout: 'mainProfile',
                 title: 'Complete Your Profile',
                 interestNames,
                 user: req.session.user
@@ -164,138 +164,23 @@ router
     .post(isAuthenticated, async (req, res) => {
         try {
             let { bio, interests } = req.body;
-            console.log(interests);
             const user = req.session.user;
 
-            // if (!user) {
-            //     return res.redirect('/login');
-            // }
-
-            if(typeof bio !== 'string'){
-                throw `Bio must be a string`;
-            }
-            if(interests){
-            interests = helpers.checkInterests(interests, 'interests');}
+                if(typeof bio !== 'string'){
+                    throw `Bio must be a string`
+                }
+                if(bio.length !== 0 && bio.trim().length === 0){
+                    throw `Bio can't be a string with just spaces`
+                }
+        
+            interests = helpers.checkInterests(interests, 'interests');
             const updatedUser = await profileDataFunction.completeProfile(user.email, bio, interests);
-            console.log(updatedUser);
 
-            // const usersCollection = await users();
-            // const updateData = {};
-            
-            // const result = await usersCollection.findOneAndUpdate(
-            //     { _id: new ObjectId(user._id) },
-            //     { $set: updateData }
-            // );
-
-            // if (result.modifiedCount === 0) {
-            //     throw `No data updated, user may not exist or no changes made.`;
-            // }
             res.redirect('/profile');
         } catch (e) {
             res.status(500).json({ error: e });
         }
     });
-
-// router
-//     .route('/updateProfile')
-//     .get(isAuthenticated, async (req, res) => {
-//         try {
-//             const usersCollection = await users();
-//             const userId = req.session.user._id;
-//             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
-
-//             const interestCollection = await allInterests();
-//             const interests = await interestCollection.find({}).toArray();
-//             const interestNames = interests.map(interest => ({
-//                 interestName: interest.interestName 
-//             }));
-
-//             res.render('./users/updateprofile', {
-//                 layout: 'main',
-//                 title: 'Update Profile',
-//                 interestNames: interestNames,
-//                 user: req.session.user,
-//                 firstName: userData.firstName,
-//                 lastName: userData.lastName,
-//                 email: userData.email,
-//                 bio: userData.bio || '',
-//                 interests: userData.interests || [], 
-//                 profilePic: userData.profilePic || '' 
-//             });
-//         } catch (e) {
-//             res.status(500).json({ error: e });
-//         }
-//     })
-//     .post(isAuthenticated, upload.single("profilePic"), async (req, res) => {
-//         try {
-//             let { firstName, lastName, bio, interests } = req.body;
-            
-//             const userId = req.session.user._id; 
-//             const usersCollection = await users();
-//             const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
-
-//             firstName = helpers.checkString(firstName, 'firstName');
-//             lastName = helpers.checkString(lastName, 'Last Name');
-//             if (typeof bio !== 'string') {
-//                 throw 'Bio must be a string.';
-//             }
-//             interests = helpers.checkInterests(interests, 'interests');
-
-//             let profilePic = user.profilePic;
-//             if (req.file) {
-//                 const oldImagePath = path.join(__dirname, "..", "public", "images", path.basename(user.profilePic));
-    
-//                 console.log(fs.existsSync(oldImagePath))
-//                 if (user.profilePic !== "/public/images/default.png" && fs.existsSync(oldImagePath)) {
-//                     fs.unlinkSync(oldImagePath);
-//                 }
-                
-//                 console.log(oldImagePath)
-//                 console.log(fs.existsSync(oldImagePath));
-//                 profilePic = `/public/images/${req.file.filename}`;
-//             }
-//             const selectedInterests = interests ? interests : user.interests;
-//             console.log("selectedInterests : " ,selectedInterests )
-
-//             const updatedUser = await profileDataFunction.updateUserProfile(
-//                 user.email,         
-//                 firstName.trim(),   
-//                 bio ,        
-//                 selectedInterests,     
-//                 lastName.trim(),
-//                 profilePic     
-//             );
-//             res.redirect('/profile');
-//         } catch (e) {
-//             console.log("error : " , e);
-//             const usersCollection = await users();
-//             const userId = req.session.user._id;
-//             const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
-//             const savedPlacesIds = userData.savedPlaces || [];
-//             let savedPlaces = [];
-            
-//             for (let placeId of savedPlacesIds) {
-//                 try {
-//                     const place = await placesData.getPlaceById(placeId);
-//                     savedPlaces.push(place);
-//                 } catch (error) {
-//                     console.error(`Error fetching place with ID ${placeId}: ${error}`);
-//                 }
-//             }
-//             res.render('./users/profile', {
-//                 layout: 'main',  
-//                 title: 'Profile',  
-//                 user: req.session.user,
-//                 profile: true,
-//                 firstName: req.body.firstName,
-//                 lastName: req.body.lastName,
-//                 bio: req.body.bio || '',
-//                 interests: req.body.interests || [],  
-//                 savedPlaces: savedPlaces || [],
-//                 profilePic: userData.profilePic
-//             });
-//         }
-//     });
 
 router
     .route('/updateProfile')
@@ -310,11 +195,11 @@ router
             const userInterests = userData.interests || [];
             const interestNames = interests.map(interest => ({
                 interestName: interest.interestName,
-                checked: userInterests.includes(interest.interestName) // Add checked property
+                checked: userInterests.includes(interest.interestName) 
             }));
 
             res.render('./users/updateprofile', {
-                layout: 'main',
+                layout: 'mainProfile',
                 title: 'Update Profile',
                 interestNames: interestNames,
                 user: req.session.user,
@@ -338,22 +223,24 @@ router
 
             firstName = helpers.checkString(firstName, 'firstName');
             lastName = helpers.checkString(lastName, 'Last Name');
-            if (typeof bio !== 'string') {
-                throw 'Bio must be a string.';
+
+                if(typeof bio !== 'string'){
+                    throw `Bio must be a string`
+                }
+                if(bio.length !== 0 && bio.trim().length === 0){
+                    throw `Bio can't be a string with just spaces`
+                }
+
+            if(interests){
+                interests = helpers.checkInterests(interests, 'interests');
             }
-            interests = helpers.checkInterests(interests, 'interests');
 
             let profilePic = user.profilePic;
             if (req.file) {
                 const oldImagePath = path.join(__dirname, "..", "public", "images", path.basename(user.profilePic));
-    
-                console.log(fs.existsSync(oldImagePath))
                 if (user.profilePic !== "/public/images/default.png" && fs.existsSync(oldImagePath)) {
                     fs.unlinkSync(oldImagePath);
                 }
-                
-                console.log(oldImagePath)
-                console.log(fs.existsSync(oldImagePath));
                 profilePic = `/public/images/${req.file.filename}`;
             }
             const selectedInterests = interests ? interests : user.interests;
@@ -373,36 +260,6 @@ router
     });
 
 router
-    .route("/deleteProfilePic")
-    .post(isAuthenticated, async (req, res) => {
-        try {
-          const userId = req.session.user._id;
-          const usersCollection = await users();
-      
-          const userData = await usersCollection.findOne({ _id: new ObjectId(userId) });
-      
-          // Remove the current profile picture
-        //   if (userData.profilePic) {
-        //     const oldImagePath = path.join(__dirname, "..", "public", userData.profilePic);
-        //     if (fs.existsSync(oldImagePath)) {
-        //       fs.unlinkSync(oldImagePath); // Delete profile picture file
-        //     }
-        //   }
-      
-        //   // Remove profilePic field from the database
-        //   await usersCollection.updateOne(
-        //     { _id: new ObjectId(userId) },
-        //     { $unset: { profilePic: "" } }
-        //   );
-      
-          res.redirect("/profile");
-        } catch (e) {
-          console.error("Error deleting profile picture:", e);
-          res.status(500).render("error", { error: e });
-        }
-      });
-
-router
     .route('/profile')
     .get(isAuthenticated, async (req, res) => {
         try {
@@ -415,15 +272,20 @@ router
             let bio = userData.bio || '';
             let interests = userData.interests || [];
     
-
             firstName = helpers.checkString(firstName, 'firstName');
-             lastName = helpers.checkString(lastName, 'Last Name');
-             email = helpers.checkEmail(email, 'email')
-             if(typeof bio !== 'string'){
-                throw`Bio must be a string`
-            }
+            lastName = helpers.checkString(lastName, 'Last Name');
+            email = helpers.checkEmail(email, 'email');
+
+                if(typeof bio !== 'string'){
+                    throw `Bio must be a string`
+                }
+                if(bio.length !== 0 && bio.trim().length === 0){
+                    throw `Bio can't be a string with just spaces`
+                }
+
             if(interests){
-            interests = helpers.checkInterests(interests, 'interests');}
+                interests = helpers.checkInterests(interests, 'interests');
+            }
             const savedPlacesIds = userData.savedPlaces || [];
             if (!Array.isArray(savedPlacesIds)) {
 
@@ -446,7 +308,7 @@ router
             }
 
             res.render('./users/profile', {
-                layout: 'main',
+                layout: 'mainProfile',
                 title: `${userData.firstName} ${userData.lastName}'s Profile`,
                 user: req.session.user,
                 profile: true,

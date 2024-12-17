@@ -1,84 +1,11 @@
 <h2>Complete Your Profile</h2>
 
-
-<style>
-  [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
-     position: relative; 
-     opacity: 1; 
-    pointer-events: none;
-}
-
-.profile {
-    box-shadow: 0px 0px 3px #ccc;
-    padding: 30px;
-}
-.profile h3 {
-    margin: 0;
-     font-size: 26px;
-       color: #fff;
-}
-header {
-    background-color: #726fcb;  
-    padding: 10px;
-    text-transform: capitalize;    
-           display: flex;;
-    align-items: center;
-    justify-content: space-between;
-       border-radius: 4px;
-   
-}
-.profile-dropdown {
-    position: relative;
-  top: 5px;
-    right: 9px;
-}
-.profile-dropdown span {
-    display: inline-block;
-    background-color: #fff;
-    width: 30px;
-    height: 30px;
-    font-size: 24px;
-    padding: 20px;
-    border-radius: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.profile-dropdown ul{
-    display:none;
-}
-
-.profile-dropdown:hover ul {
-    display: block;
-    position: absolute;
-    z-index: 3;
-    top: 25px;
-    background-color: #f9f9f9;
-    width: 140px;
-    right: 0;
-    line-height: 36px;
-    padding: 10px;
-    border-radius: 4px;
-}
-</style>
 <div class="profile">
-    <header>
-        <h3>Complete Your Profile</h3>
-
-        <div class="profile-dropdown">
-            <span>P</span>
-            <ul>
-                <li><a href="/profile">My profile</a></li>
-                <li><a href="/updateprofile">Edit profile</a></li>
-                <li><a href="/reset">Change Password</a></li>
-                <li><a href="/logout">Logout</a></li>
-            </ul>
-        </div>
-    </header>
-
 
 <form action="/profilesetup" method="POST">
     <!-- Bio (Optional) -->
+    <h3>Complete Your Profile</h3>
+
     <label for="bio">Bio (Optional):</label>
     <textarea name="bio" placeholder="Tell us about yourself..."></textarea>
 
@@ -89,7 +16,10 @@ header {
     
       <div>
      {{#each interestNames}}
-          <label><input type="checkbox" name="interests" value={{this.interestName}} {% if interests.includes({{this.interestName}}) %}checked{% endif %}> {{this.interestName}}</label>
+          <label>
+    <input class="interest-checkbox" type="checkbox" name="interests[]" value="{{this.interestName}}" {{#if this.checked}}checked{{/if}}>
+    {{this.interestName}}
+</label>
         {{/each}}
    </div>
     <p id="error-message" style="color: red;"></p>

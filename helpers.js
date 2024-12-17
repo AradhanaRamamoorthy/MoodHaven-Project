@@ -32,17 +32,21 @@ checkgoogleLastname (str, name) {
     }
     return str.trim();
 },
-checkEmail (str, name) {
-    if(!str){
+checkEmail(str, name) {
+    if (!str) {
         throw `Input(${name}) must be provided and should not be a falsy value`;
     }
     if (typeof str !== 'string') {
-        throw `Input(${name}) must be strings but got ${typeof str}`;
+        throw `Input(${name}) must be a string but got ${typeof str}`;
     }
-    if (str.trim().length === 0){
+    if (str.trim().length === 0) {
         throw `Input(${name}) cannot be an empty string or just spaces`;
     }
-    return str.trim().toLowerCase();
+    const trimmedStr = str.trim().toLowerCase();
+    if (!trimmedStr.endsWith('@gmail.com')) {
+        throw `Input(${name}) must be a valid Gmail address`;
+    }
+    return trimmedStr;
 },
 checkArray(arrValue, varName)
 {

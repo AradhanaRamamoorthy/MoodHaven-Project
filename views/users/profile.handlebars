@@ -2,24 +2,11 @@
 
 
 <div class="profile">
-    <header>
-        <h3>{{firstName}} {{lastName}}'s Profile</h3>
-
-        <div class="profile-dropdown">
-            <span>P</span>
-            <ul>
-                <li><a href="/profile">My profile</a></li>
-                <li><a href="/updateProfile">Edit profile</a></li>
-                <li><a href="/reset">Change Password</a></li>
-                 <li><a href="/logout">Logout</a></li>
-
-                </ul>
-        </div>
-    </header>
-
     <main>
 {{#if firstName}}
+
     <div>
+      <h3>{{firstName}} {{lastName}}'s Profile</h3>
             <img src="{{profilePic}}" alt="Profile Picture" style="max-width: 150px; max-height: 150px;" />           
             <p><strong>First Name:</strong> {{firstName}}</p>
             <p><strong>Last Name:</strong> {{lastName}}</p>
@@ -74,34 +61,4 @@
     </main>
 </div>
 
-
-<script>
-  function toggleLike(placeId) {
-  const likeButton = document.querySelector(`[data-place-id="${placeId}"]`);
-  const isLiked = false;
-
-  likeButton.textContent = isLiked ? "Like" : "Liked";
-
-console.log()
-
-  fetch('/places/toggleLike', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      placeId: placeId,
-      liked: false,
-    }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (!data.success) {
-      alert('Error saving like status');
-    } else {
-         window.location.reload(); 
-    }
-
-  });
-}
-</script>
+<script src="/public/js/savePlacesProfile.js"></script>

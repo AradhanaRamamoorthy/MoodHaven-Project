@@ -4,6 +4,7 @@ if (profileForm) {
     const firstNameInput = document.getElementById('firstName');
     const lastNameInput = document.getElementById('lastName');
     const bioInput = document.getElementById('bio');
+    const profilePicInput = document.getElementById('profilePic'); 
     const interestsCheckboxes = document.querySelectorAll('input[name="interests[]"]');
     const errorContainer = document.getElementById('error-container');
     const errorMessage = errorContainer.querySelector('.text-goes-here');
@@ -23,6 +24,7 @@ if (profileForm) {
             .filter(checkbox => checkbox.checked)
             .map(checkbox => checkbox.value);
 
+        const profilePic = profilePicInput.files[0];
         // Client-Side Validations
         if (!firstName || !lastName) {
             errorMessage.textContent = 'First name and last name are required.';
@@ -42,16 +44,19 @@ if (profileForm) {
             return;
         }
         // Send Data to Server
+       const formData = new FormData();
+        formData.append('firstName', firstName);
+        formData.append('lastName', lastName);
+        formData.append('bio', bio);
+        selectedInterests.forEach(interest => formData.append('interests[]', interest));
+        if (profilePicInput.files[0]) {
+            formData.append('profilePic', profilePicInput.files[0]); // Append the file
+        } 
+
         try {
             const response = await fetch('/updateProfile', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    firstName,
-                    lastName,
-                    bio,
-                    interests: selectedInterests,
-                }),
+                body: formData,
             });
 
             if (!response.ok) {

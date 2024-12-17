@@ -1,0 +1,64 @@
+<p>Welcome to profile page</p>
+
+
+<div class="profile">
+    <main>
+{{#if firstName}}
+
+    <div>
+      <h3>{{firstName}} {{lastName}}'s Profile</h3>
+            <img src="{{profilePic}}" alt="Profile Picture" style="max-width: 150px; max-height: 150px;" />           
+            <p><strong>First Name:</strong> {{firstName}}</p>
+            <p><strong>Last Name:</strong> {{lastName}}</p>
+            <p><strong>Email:</strong> {{email}}</p>
+            <p><strong>Bio:</strong> {{#if bio}}{{bio}}{{else}}No bio provided.{{/if}}</p> 
+            <p><strong>Interests:</strong> {{#if interests}}{{interests}}{{else}}No interests provided.{{/if}}</p>
+            <p><strong>Saved Places:</strong> 
+            {{#if savedPlaces}}
+                {{#each savedPlaces}}
+                <div class="saved-places-wrapper">
+    <div class="place-container">
+      <div class="place-icon">
+        <img src="{{#if icon_photo}}{{icon_photo}}{{else}}/path/to/default/image.jpg{{/if}}" alt="Place Icon" class="place-image" />
+      </div>
+      <div class="place-details">
+        <h3 class="place-name">
+          <a href="{{website}}" target="_blank">{{placeName}}</a>
+        </h3>
+        <p class="place-address">
+          <a href="{{url}}" target="_blank">{{address}}</a>
+        </p>
+        <p class="place-rating"><strong>Rating:</strong> {{#if google_rating}}{{google_rating}}{{else}}Not rated yet{{/if}} / 5</p>
+      
+        
+
+      </div>
+      <div class="like-btn">
+       
+      <button class="like-btn" data-place-id="{{_id}}" onclick="toggleLike('{{_id}}')">
+        Remove from saved places
+      </button>
+      </div>
+    </div>
+    </div>
+  {{/each}}
+            {{else}}
+                No saved places provided.
+            {{/if}}
+            </p>
+
+    </div>
+{{else}}
+    <p>No user data available.</p>
+{{/if}}
+
+<div class="card-footer text-center">
+        <div class="small">
+            <a href="/moods/moodpage">Back to application</a><br>
+        </div>
+    </div>
+    
+    </main>
+</div>
+
+<script src="/public/js/savePlacesProfile.js"></script>

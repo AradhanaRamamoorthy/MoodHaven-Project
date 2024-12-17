@@ -1,0 +1,43 @@
+<h1>Select an Interest</h1>
+<main>
+{{#if hasErrors}}
+  <p class="error">{{errors}}</p>
+{{/if}}
+<form id="interestForm" action="/interests/:interest/activities" method="POST">
+  <div class="form-floating col-3">
+    <select name="interest" class="form-select" id="interestselect" required>
+      <option value="" disabled selected>Choose an interest</option>
+      {{#each interests}}
+        <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <button type="button" id="getActivitiesBtn" class="btn btn-primary mt-3">Get Activities</button>
+</form>
+
+<div id="activities-container" class="hidden">
+  <h3>Suggested Activities:</h3>
+  <div class="form-floating col-3">
+    <select name="activity" class="form-select" id="activityselect" required>
+      <option value="" disabled selected>Choose an activity</option>
+    </select>
+  </div>
+</div>
+
+<form id="activityForm" action="/interests/placepage" method="POST">
+    <input type="hidden" name="activity" id="selectedActivityInput" value=""> 
+<div class="interestForm hidden" id="error-container">
+  <div class="alert alert-danger text-goes-here"></div>
+</div>
+    <button type="submit" id="nextPageBtn" class="submit_button hidden">Next</button>
+</form>
+</main>
+<script 
+  src="https://code.jquery.com/jquery-2.2.4.min.js" 
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" 
+  crossorigin="anonymous">
+</script>
+<script src="/public/js/interests.js"></script>
+<script src="/public/js/places.js"></script>
+
+

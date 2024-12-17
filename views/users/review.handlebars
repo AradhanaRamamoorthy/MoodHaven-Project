@@ -1,0 +1,42 @@
+<div id="reviewModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span id="modalClose" class="close">&times;</span>
+    <p>Would you like to leave a review?</p>
+    <button id="modalYes">Yes</button>
+  </div>
+</div>
+<h2 id="reviewTitle" style="display: none;">Review</h2>
+
+<input type="hidden" id="userId" value="{{userId}}">
+
+<div id="question1" class="question" style="display: none;">
+  <p>Did you visit any of the suggested places?</p>
+  <button id="visitedYes">Yes</button>
+  <button id="visitedNo">No</button>
+</div>
+
+<div id="question2" class="question" style="display: none;">
+  <p>Select the place you visited:</p>
+  <label for="placeId">Place:</label>
+  <select id="placeId">
+    {{#each places}}
+      <option value="{{this._id}}">{{this.placeName}}</option>
+    {{/each}}
+  </select>
+  <button id="question2Next">Next</button>
+</div>
+
+<div id="question3" class="question" style="display: none;">
+  <p>How would you rate your visit?</p>
+  <label for="rating">Rating (1-5):</label>
+  <input type="number" id="rating" min="1" max="5" />
+  <button id="question3Next">Next</button>
+</div>
+
+
+<script 
+  src="https://code.jquery.com/jquery-2.2.4.min.js" 
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" 
+  crossorigin="anonymous">
+</script>
+<script src="/public/js/review.js"></script>

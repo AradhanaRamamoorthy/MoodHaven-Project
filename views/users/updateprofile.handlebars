@@ -1,0 +1,45 @@
+
+<div class="profile">
+    <div class = "interestForm hidden" id = "error-container">
+            <div class = "alert alert-danger text-goes-here"></div>
+        </div>
+   
+<main>
+    <h3>{{firstName}} {{lastName}}'s Profile</h3>
+    <form action="/updateProfile" method="POST"  enctype="multipart/form-data" id="interestForm">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" value="{{firstName}}" required>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" value="{{lastName}}" required>
+
+        <label for="bio">Bio:</label>
+        <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{bio}}</textarea>
+
+        <label for="interests">Select Interests (at least 5 required):</label>
+        <div>Current selected interests : {{interests}}</div>
+
+        <div id="interests">
+           {{#each interestNames}}
+<label>
+    <input class="interest-checkbox" type="checkbox" name="interests[]" value="{{this.interestName}}" {{#if this.checked}}checked{{/if}}>
+    {{this.interestName}}
+</label>
+{{/each}}
+            
+        </div>
+
+        <label for="profilePic">Profile Picture:</label>
+        <input type="file" id="profilePic" name="profilePic" accept="image/*">
+        
+        <button type="submit">Save Changes</button>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+         <script src="/public/js/profile.js"></script> 
+    </form>
+
+    
+
+    <a href="/profile">Cancel</a>
+</main>
+</div>

@@ -1,0 +1,87 @@
+/* *,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #26402A;
+    --secondary-color: #F2A30F;
+    --light-text-color: #F2F2F2;
+} */
+/* 
+body {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    background-color: #FFFFFF;
+} */
+
+.link {
+    color: var(--light-text-color);
+    text-decoration: none;
+}
+
+.link:hover,
+.link:focus {
+    color: var(--secondary-color);
+    transition: color 0.3s ease;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: var(--primary-color);
+    top: 0;
+    left: 0;
+    padding: 10px 20px 10px;
+    z-index: 100;
+}
+
+.navbar-list {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    list-style: none;
+}
+
+.navbar-list a {
+    padding: 5px 10px;
+    margin: 0 20px;
+}
+
+/* Sign Up and Log In Button */
+.navbar-list .sign-up,
+.navbar-list .log-in {
+    border: 2px solid var(--light-text-color);
+    border-radius: 10px;
+}
+
+.navbar-list .sign-up {
+    margin-right: 5px;
+}
+
+.navbar-list .sign-up:hover,
+.navbar-list .log-in:hover,
+.navbar-list .sign-up:focus,
+.navbar-list .log-in:focus {
+    font-weight: bold;
+    color: var(--primary-color);
+    border: 2px solid var(--secondary-color);
+    background-color: var(--secondary-color);
+}
+
+/* Media Queries for Responsiveness */
+@media screen and (max-width: 768px) {
+
+    /* Hide Navbar on Small Screen */
+    .navbar-list {
+        display: none;
+    }
+
+}

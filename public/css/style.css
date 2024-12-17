@@ -1,0 +1,84 @@
+p{
+    margin: 10px 0 !important;
+}
+
+.login-container{
+    width: 400px;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .password-container input {
+    width: 100%;
+    padding-right: 40px; 
+  }
+  
+.toggle-password {
+    position: absolute;
+    right: 30px;
+    background: none; 
+    border: none; 
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .toggle-password:focus,
+  .toggle-password:active {
+    outline: none; 
+    background: none; 
+    color: inherit; 
+  }
+  
+  .toggle-password i {
+    font-size: 18px;
+    color: #666; 
+  }
+  
+  .toggle-password:focus i,
+  .toggle-password:active i {
+    color: #666; 
+  }
+
+  .password-wrapper {
+    position: relative; 
+    margin-bottom: 15px; 
+  }
+
+  #passwordReset, #confirmPasswordReset {
+    width: calc(100% - 40px); 
+    padding-right: 40px; 
+ }
+
+ .toggle-passwordReset {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%); 
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+
+.toggle-passwordReset:focus,
+  .toggle-passwordReset:active {
+    outline: none; 
+    background: none; 
+    color: inherit; 
+  }
+  
+  .toggle-passwordReset i {
+    font-size: 18px;
+    color: #666; 
+  }
+  
+  .toggle-passwordReset:focus i,
+  .toggle-passwordReset:active i {
+    color: #666; 
+  }

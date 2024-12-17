@@ -1,0 +1,30 @@
+<h2>Complete Your Profile</h2>
+
+<div class="profile">
+
+<form action="/profilesetup" method="POST">
+    <!-- Bio (Optional) -->
+    <h3>Complete Your Profile</h3>
+
+    <label for="bio">Bio (Optional):</label>
+    <textarea name="bio" placeholder="Tell us about yourself..."></textarea>
+
+
+
+    <!-- Interests (Required) -->
+    <div  for="interests">Select up to 5 Interests (Required):</div>
+    
+      <div>
+     {{#each interestNames}}
+          <label>
+    <input class="interest-checkbox" type="checkbox" name="interests[]" value="{{this.interestName}}" {{#if this.checked}}checked{{/if}}>
+    {{this.interestName}}
+</label>
+        {{/each}}
+   </div>
+    <p id="error-message" style="color: red;"></p>
+    <br>
+    <button type="submit">Save to Profile</button>
+</form>
+
+</div>

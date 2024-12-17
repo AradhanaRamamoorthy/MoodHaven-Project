@@ -1,0 +1,35 @@
+<h1>What is your Current Mood?</h1>
+
+<main>
+    {{#if hasErrors}}
+    <p class="error">{{errors}}</p>
+    {{/if}}
+    <form id = "moodForm" action="/moods/activitypage" method="POST">
+    <div class = "moods">
+        {{#each moods}}
+        <div class = "mood-list">
+            <input type = "radio"
+                    id = "{{this.moodName}}"
+                    name = "usermood"
+                    value = "{{this.moodName}}"
+                    hidden/>
+             <label for="{{this.moodName}}" class="mood-label">
+                    {{this.moodName}}
+                </label>
+            <div class = "mood-variants">
+                {{#each this.mood_variants}}
+                    <p>{{this}}</p>
+                    {{/each}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+     <div class = "moodForm hidden" id = "error-container">
+        <div class = "alert alert-danger text-goes-here"></div>
+     </div>
+      <button type = "submit" class = "submit">Submit</button>
+     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+     <script src="/public/js/Mood.js"></script>
+    </form>
+</main>

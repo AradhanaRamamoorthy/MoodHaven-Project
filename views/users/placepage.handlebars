@@ -1,0 +1,75 @@
+<h1>Places Suggested</h1>
+
+{{#if hasErrors}}
+  <p class="error">{{errors}}</p>
+{{/if}}
+<main>
+  {{#each places}}
+    <div class="place-container">
+      <div class="place-icon">
+        <img src="{{#if icon_photo}}{{icon_photo}}{{else}}/public/images/no_image_available.jpeg{{/if}}" alt="Place Icon" class="place-image" />
+      </div>
+      <div class="place-details">
+        <h3 class="place-name">
+          {{#if website}}
+            <a href="{{website}}" target="_blank">{{placeName}}</a>
+          {{else}}
+            {{placeName}}
+          {{/if}}
+        </h3>
+        <p class="place-address">
+          <a href="{{url}}" target="_blank">{{address}}</a>
+        </p>
+        <p class="place-rating"><strong>Rating:</strong> {{Rating}} / 5</p>
+        <button class="like-btn" data-place-id="{{_id}}" onclick="toggleLike('{{_id}}')">
+        {{#if liked}}Liked{{else}}Like{{/if}}
+      </button>
+
+      </div>
+
+      <div class = "comments-tag">
+        <h4>Drop Comments</h4>
+        <div class="comments-details" id = "comments_list_{{_id}}">
+          {{#if comments}}
+            {{#each comments}}
+              <div class="comment_display_info">
+              <div class="user-details">
+                <img class="user-profile-pic" src="{{#if user_profilePic}}{{user_profilePic}}{{/if}}" alt="{{userName}}'s profile picture">
+                <p class="userName">
+                  {{userName}}  <br>
+                  <small class="commentTime">{{date}}</small>
+                </p>
+              </div>
+              <p class="commentContent">{{comment_content}}</p>
+              </div>
+            {{/each}}
+          {{else}}
+            <p>No comments added for the place yet. Drop a comment if you like!</p>
+          {{/if}}
+        
+        </div>
+
+         <div class = "placepage hidden" id = "error-container">
+        <div class = "alert alert-danger text-goes-here"></div>
+        </div>
+       
+        <form class = "comment_Form" data-place-id = "{{_id}}">
+          {{#if user_name}}
+           <div class="user-details">
+           {{#if user_profilePic}}
+                <img class="user-profile-pic" src="{{user_profilePic}}" alt="{{user_name}}'s profile" />
+              {{/if}}
+              <p class="userName">{{user_name}}</p>
+            </div>
+          {{/if}}
+          <textarea id = "commentText-{{_id}}" placeholder = "Drop your comment here..." required></textarea>
+          <button type = "submit">Post the Comment</button>
+        </form>
+      </div>
+    </div>
+  {{/each}}
+</main>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+         <script src="/public/js/user_comments.js"></script>
+         <script src="/public/js/savedplace.js"></script>

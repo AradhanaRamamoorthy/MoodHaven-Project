@@ -1,0 +1,40 @@
+<div class="signup-container">
+        <h2>Login</h2>
+
+        <div class = "loginForm hidden" id = "error-container">
+            <div class = "alert alert-danger text-goes-here"></div>
+        </div>
+        <form id="loginForm" action="/" method="POST">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="button" id="togglePassword" class="toggle-password">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+
+            <button type="submit">Login</button>
+
+            <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+            <script src="/public/js/login.js"></script>
+        </form>
+    </div>
+
+    <br>
+    <div class="card-footer text-center">
+        <div class="small">
+            <a href="/signup">Don't have an account yet? Signup</a><br>
+            <a href="/reset"><i>Forgot Password?</i></a>
+        </div>
+    </div>
+
+    <br>
+    <a href="/auth/google" class="btn red darken-1">
+        <i class="fab fa-google left">Login with google</i>
+    </a>

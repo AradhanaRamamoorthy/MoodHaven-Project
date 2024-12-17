@@ -1,0 +1,29 @@
+{{!-- <nav class="grey darken-3">
+ <div class="nav-wrapper container">
+    <a href="/moods/moodpage" class="brand-logo center"> Mood Haven </a>
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger show-on-large">
+        <i class="fas fa-bars"></i>
+    </a>
+    <ul class="sidenav" id="mobile-demo">
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+ </div>
+</nav> --}}
+
+<div class="navbar">
+    <ul class="navbar-list" id="navbar-list">
+        {{#if user}}
+            {{#if profile}}
+                <li><a href="/updateProfile" class="link">Edit profile</a></li>
+                <li><a href="/reset" class="link">Change Password</a></li>
+            {{else}}
+                <li><a href="/profile" class="link">Profile</a></li>
+            {{/if}}
+            <li><a href="/logout" class="sign-up link">Log Out</a></li>
+        {{else}}
+            <li><a href="/signup" class="sign-up link">Sign Up</a></li>
+            <li><a href="/signin" class="log-in link">Log In</a></li>
+        {{/if}}
+    </ul>
+</div>

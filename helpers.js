@@ -88,10 +88,6 @@ checkObject(objValue, varName)
                 this.checkId(objValue[key]);
             if(key === "date")
                 this.checkString(objValue[key], "date");
-            if(key === "user_profilePic")
-            {
-                if(!objValue[key]) throw 'No user Profile pic is available';
-            }
         }
     });
     return objValue;

@@ -175,15 +175,10 @@ router
       place_Id = helpers.checkId(place_Id);
       comment_Text = helpers.checkString(comment_Text, "user_comment");
       user_name = helpers.checkString(user_name, "userName");
-      if(!user_profilePic) throw 'No user Profile Pic'
     }
     catch(e)
     {
-      return res.status(400).render('users/placepage', {
-        title : 'Place Page',
-        errors: e,
-        hasErrors: true,
-      });
+      return res.status(400).json({ error: 'Comment values cannot be empty' });
     }
     try
     {

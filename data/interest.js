@@ -32,7 +32,7 @@ const getAllInterests = async () => {
 };
 
 const getActivitiesByInterest = async (interest) => {
-    if (typeof interest !== 'string' || interest.trim().length === 0) {
+    if (!interest || typeof interest !== 'string' || interest.trim().length === 0) {
         throw new Error('Invalid interest provided');
     }
 

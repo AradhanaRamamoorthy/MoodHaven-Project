@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let place_ids = document.querySelectorAll(".place-id");
     let comment_form = document.querySelectorAll(".comment_Form");
     const errorContainer = document.getElementById('error-container');
-    const errorMessage = errorContainer.getElementsByClassName('text-goes-here')[0];
+    const errorMessage = errorContainer.querySelector('.text-goes-here');
     errorContainer.classList.add('hidden');
 
     function display_Comments(display_Info) {
@@ -47,16 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             catch(e)
             {
-                errorMessage.textContent = "There is an issue in toggling the comment! Please try again!";
-                errorContainer.classList.remove('hidden');
+                alert("There is an issue in toggling the comment! Please try again!");
             }
             });
         }
     }
     catch(e)
         {
-            errorMessage.textContent = "Error in fetching the comments!";
-            errorContainer.classList.remove('hidden');
+            alert("Error in fetching the comments!");
         }
     }
 
@@ -72,8 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
             comment_Text = comment_Text.trim();
             
             if (!comment_Text || typeof comment_Text !== 'string' || comment_Text.length === 0) {
-                errorMessage.textContent = "Comments cannot be empty value!";
-                errorContainer.classList.remove('hidden');
+                alert("Comments cannot be empty value");
+                return;
             }
 
             let userNameElement = commentForm.querySelector(".userName");
@@ -91,7 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 if (!response.ok) {
-                    throw "Failed to post comment!";
+                    const errorData = await response.json();
+                    errorMessage.textContent = errorData.error || 'An error occurred. Please try again.';
+                    errorContainer.classList.remove('hidden');
                 }
 
                 let comments_updated = await response.json();

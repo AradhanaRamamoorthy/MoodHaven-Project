@@ -39,23 +39,14 @@ router
         }
         catch(e)
         {
-            return res.status(400).render('./users/moodQuestionnaire', { 
-                status: 400, 
-                errors: "No mood is selected to fetch the interest!",
-                hasErrors: true 
-            }); 
+            return res.status(400).json({status: 400, error:  "No mood is selected to fetch the interest!"});
         }
 
         try 
         {
             const moodSelected = await moodsData.getMoodByName(usermood);
             if (!moodSelected) {
-                return res.status(404).render('./users/moodQuestionnaire', { 
-                    title: 'Moods Page',
-                    status: 404, 
-                    error: "Mood not found!" ,
-                    hasErrors: true
-                });
+                return res.status(404).json({status: 400, error:  "Mood not found"});
             }
 
             const associated_Interests = moodSelected.interest;

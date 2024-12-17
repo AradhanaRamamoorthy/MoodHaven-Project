@@ -13,13 +13,14 @@ function isAuthenticated(req, res, next) {
 router.get('/:interest/activities', isAuthenticated, async (req, res) => {
     const interestName = req.params.interest;
     
-    if (!interestName || typeof interestName !== 'string' || !/^[a-zA-Z\s]+$/.test(interestName)) {
+    if (!interestName || typeof interestName !== 'string' || interestName.length === 0) {
         return res.status(400).json({ error: 'Invalid interest parameter. Please provide a valid interest name.' });
     }
 
     try {
-        const activities = await interestData.getActivitiesByInterest(interestName);
+        let activities = await interestData.getActivitiesByInterest(interestName);
         if (activities.length > 0) {
+            activities = helpers.checkArray(activities, "selectedActivity");
             res.json(activities); 
         } else {
             res.status(404).json({ message: 'No activities found for this interest.' });

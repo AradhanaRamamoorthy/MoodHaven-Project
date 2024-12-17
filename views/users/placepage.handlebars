@@ -11,7 +11,11 @@
       </div>
       <div class="place-details">
         <h3 class="place-name">
-          <a href="{{website}}" target="_blank">{{placeName}}</a>
+          {{#if website}}
+            <a href="{{website}}" target="_blank">{{placeName}}</a>
+          {{else}}
+            {{placeName}}
+          {{/if}}
         </h3>
         <p class="place-address">
           <a href="{{url}}" target="_blank">{{address}}</a>

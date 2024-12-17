@@ -19,6 +19,14 @@ In the tasks folder, we have the following files:
 3. `places.js`
 4. `users.js`
 
+command : 
+cd tasks
+node seed.js
+node interests.js
+places.js
+node users.js
+   
+
 ### 3. Add Configuration
 
 Add the attached `config.env` file to the `config` folder.

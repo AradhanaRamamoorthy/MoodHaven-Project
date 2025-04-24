@@ -43,7 +43,7 @@ Designed with empathy in mind, this platform empowers users to take positive act
 
 - [Aradhana Ramamoorthy](https://github.com/AradhanaRamamoorthy)
 - [Angelina Mange](https://github.com/Angelina1225)
-- [Nikiha Michael)(https://github.com/nikithamic)
+- [Nikiha Michael](https://github.com/nikithamic)
 - [Sneha Venkatesan](https://github.com/sne-ha-v)
 
 ## Instructions to Run the Code
